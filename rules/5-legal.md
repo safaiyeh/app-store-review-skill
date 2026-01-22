@@ -30,32 +30,165 @@ description: App Store Review Guidelines Section 5 - Legal (privacy, data collec
 - [ ] Purpose strings must clearly describe data use
 - [ ] GDPR compliance if relying on legitimate interest
 
+### Permission Usage Description Checklist
+
+> **CRITICAL:** Apple reviewers will reject apps with missing or vague permission usage descriptions. Every permission your app requests MUST have a clear, specific description explaining WHY and HOW the data is used.
+
+**Before submission, verify:**
+- [ ] All required permission keys are present in Info.plist
+- [ ] Each description explains the specific feature that uses the permission
+- [ ] Descriptions are user-friendly (not technical jargon)
+- [ ] Descriptions match actual app functionality
+- [ ] No generic phrases like "for app functionality" or "required for this app"
+
+### Complete Info.plist Permission Reference
+
 **Info.plist purpose strings (Swift & React Native):**
 ```xml
 <!-- REQUIRED: Clear purpose strings in Info.plist -->
 <!-- These apply to BOTH native Swift AND React Native apps -->
 
+<!-- CAMERA -->
 <key>NSCameraUsageDescription</key>
 <string>Camera is used to scan product barcodes for price comparison</string>
 
-<key>NSLocationWhenInUseUsageDescription</key>
-<string>Your location helps find nearby stores with the products you're looking for</string>
-
+<!-- PHOTO LIBRARY -->
 <key>NSPhotoLibraryUsageDescription</key>
 <string>Photo access allows you to upload images for your profile</string>
 
+<key>NSPhotoLibraryAddUsageDescription</key>
+<string>Save edited photos to your photo library</string>
+
+<!-- LOCATION -->
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Your location helps find nearby stores with the products you're looking for</string>
+
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+<string>Background location is used to notify you when you're near a saved store</string>
+
+<key>NSLocationAlwaysUsageDescription</key>
+<string>Background location tracks your running route even when the app is closed</string>
+
+<!-- MICROPHONE -->
 <key>NSMicrophoneUsageDescription</key>
 <string>Microphone is used for voice search and video calls with support</string>
 
+<!-- CONTACTS -->
 <key>NSContactsUsageDescription</key>
 <string>Contacts help you find friends already using the app</string>
 
+<!-- CALENDARS -->
+<key>NSCalendarsUsageDescription</key>
+<string>Calendar access lets you add event reminders directly to your calendar</string>
+
+<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+<string>Add workout sessions to your calendar</string>
+
+<!-- REMINDERS -->
+<key>NSRemindersUsageDescription</key>
+<string>Create reminders for tasks you save in the app</string>
+
+<!-- BLUETOOTH -->
+<key>NSBluetoothAlwaysUsageDescription</key>
+<string>Bluetooth connects to your fitness tracker to sync workout data</string>
+
+<key>NSBluetoothPeripheralUsageDescription</key>
+<string>Connect to Bluetooth devices for data transfer</string>
+
+<!-- HEALTH -->
+<key>NSHealthShareUsageDescription</key>
+<string>Read your step count and workout data to track fitness goals</string>
+
+<key>NSHealthUpdateUsageDescription</key>
+<string>Save workout sessions and calories burned to Apple Health</string>
+
+<!-- MOTION -->
+<key>NSMotionUsageDescription</key>
+<string>Motion data is used to count your steps and track physical activity</string>
+
+<!-- FACE ID -->
+<key>NSFaceIDUsageDescription</key>
+<string>Use Face ID to securely unlock the app and authorize payments</string>
+
+<!-- SPEECH RECOGNITION -->
+<key>NSSpeechRecognitionUsageDescription</key>
+<string>Voice commands let you navigate the app hands-free</string>
+
+<!-- SIRI -->
+<key>NSSiriUsageDescription</key>
+<string>Add Siri shortcuts to quickly start your favorite workout</string>
+
+<!-- TRACKING -->
 <key>NSUserTrackingUsageDescription</key>
 <string>This identifier will be used to deliver personalized ads to you</string>
 
-<!-- FLAG: Vague purpose strings - REJECTION RISK -->
-<!-- "This app needs camera access" - Too vague -->
-<!-- "Required for app functionality" - Too vague -->
+<!-- APPLE MUSIC -->
+<key>NSAppleMusicUsageDescription</key>
+<string>Access your Apple Music library to play songs during workouts</string>
+
+<!-- HOME -->
+<key>NSHomeKitUsageDescription</key>
+<string>Control your smart home devices directly from the app</string>
+
+<!-- LOCAL NETWORK -->
+<key>NSLocalNetworkUsageDescription</key>
+<string>Discover and connect to devices on your local network for casting</string>
+
+<!-- NEARBY INTERACTION -->
+<key>NSNearbyInteractionUsageDescription</key>
+<string>Find the precise location of your connected devices</string>
+```
+
+### Good vs Bad Purpose Strings
+
+| Permission | ❌ BAD (Rejection Risk) | ✅ GOOD |
+|------------|------------------------|---------|
+| Camera | "Camera access needed" | "Take photos to attach to your support tickets" |
+| Camera | "For app functionality" | "Scan QR codes to quickly add friends" |
+| Photo Library | "Access photos" | "Choose photos from your library to create a collage" |
+| Location | "Location required" | "Find coffee shops within 2 miles of your current location" |
+| Location | "We need your location" | "Show your position on the delivery tracking map" |
+| Microphone | "Microphone permission" | "Record voice memos to attach to your notes" |
+| Contacts | "To access contacts" | "Find friends who are already using the app" |
+| Bluetooth | "Bluetooth needed" | "Connect to your heart rate monitor during workouts" |
+| Health | "Health data access" | "Read your daily step count to track progress toward your goal" |
+| Tracking | "For a better experience" | "This identifier will be used to deliver personalized ads" |
+
+### Common Rejection Reasons for Permissions
+
+**Location Permission Rejections:**
+```xml
+<!-- ❌ REJECTION: Vague description -->
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>This app requires location access</string>
+
+<!-- ❌ REJECTION: No explanation of benefit to user -->
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Location is used by this app</string>
+
+<!-- ❌ REJECTION: Over-requesting (Always when WhenInUse is sufficient) -->
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+<string>For location features</string>
+
+<!-- ✅ GOOD: Specific, user-beneficial -->
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Your location is used to show nearby restaurants and calculate delivery times to your address</string>
+```
+
+**Camera/Photo Library Rejections:**
+```xml
+<!-- ❌ REJECTION: Missing description entirely when using camera -->
+<!-- If you use react-native-image-picker or expo-image-picker, you NEED these! -->
+
+<!-- ❌ REJECTION: Generic description -->
+<key>NSCameraUsageDescription</key>
+<string>Camera access is required</string>
+
+<!-- ✅ GOOD: Explains exactly what user does with camera -->
+<key>NSCameraUsageDescription</key>
+<string>Take photos of receipts to submit expense reports</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Select existing photos of receipts from your library</string>
 ```
 
 **React Native - Edit ios/[AppName]/Info.plist:**
@@ -65,10 +198,16 @@ description: App Store Review Guidelines Section 5 - Legal (privacy, data collec
 
 // Common packages requiring purpose strings:
 // react-native-camera → NSCameraUsageDescription
+// react-native-vision-camera → NSCameraUsageDescription, NSMicrophoneUsageDescription
 // react-native-image-picker → NSPhotoLibraryUsageDescription, NSCameraUsageDescription
 // @react-native-community/geolocation → NSLocationWhenInUseUsageDescription
+// react-native-geolocation-service → NSLocationWhenInUseUsageDescription
+// expo-location → NSLocationWhenInUseUsageDescription
 // react-native-contacts → NSContactsUsageDescription
 // react-native-permissions → Various depending on permissions requested
+// react-native-health → NSHealthShareUsageDescription, NSHealthUpdateUsageDescription
+// react-native-ble-plx → NSBluetoothAlwaysUsageDescription
+// react-native-touch-id → NSFaceIDUsageDescription
 
 // ✅ GOOD: Specific, clear purpose strings
 const INFO_PLIST_STRINGS = {
@@ -86,6 +225,60 @@ const BAD_STRINGS = {
   NSPhotoLibraryUsageDescription: "For app features", // REJECTION
   NSLocationWhenInUseUsageDescription: "Location required", // REJECTION
 };
+```
+
+**Swift - Verify Info.plist permissions match code usage:**
+```swift
+// IMPORTANT: Only request permissions you actually use
+// Apple WILL reject if you request permissions without corresponding features
+
+import AVFoundation
+import Photos
+import CoreLocation
+import Contacts
+
+class PermissionManager {
+    // ✅ GOOD: Only request what you need, when you need it
+    func requestCameraIfNeeded() {
+        // Only call this when user taps "Take Photo"
+        AVCaptureDevice.requestAccess(for: .video) { granted in
+            // Handle permission result
+        }
+    }
+
+    // ❌ BAD: Requesting all permissions at app launch
+    func requestAllPermissionsAtLaunch() {
+        // Don't do this - Apple will reject
+        // Request permissions contextually when the feature is used
+    }
+}
+```
+
+**Expo - app.json/app.config.js permissions:**
+```javascript
+// expo app.json - Configure iOS permissions
+{
+  "expo": {
+    "ios": {
+      "infoPlist": {
+        "NSCameraUsageDescription": "Take photos to share in your posts",
+        "NSPhotoLibraryUsageDescription": "Choose photos from your library to share",
+        "NSLocationWhenInUseUsageDescription": "Show your location on the event map",
+        "NSMicrophoneUsageDescription": "Record audio for video messages",
+        "NSContactsUsageDescription": "Find friends who use the app",
+        "NSFaceIDUsageDescription": "Use Face ID to securely log in"
+      }
+    }
+  }
+}
+
+// Expo plugins that automatically add permission keys:
+// expo-camera → NSCameraUsageDescription, NSMicrophoneUsageDescription
+// expo-image-picker → NSCameraUsageDescription, NSPhotoLibraryUsageDescription
+// expo-location → NSLocationWhenInUseUsageDescription
+// expo-contacts → NSContactsUsageDescription
+// expo-calendar → NSCalendarsUsageDescription
+// expo-local-authentication → NSFaceIDUsageDescription
 ```
 
 #### (iii) Data Minimization
@@ -497,12 +690,22 @@ let manager = NEVPNManager.shared()
 
 ## React Native Privacy Checklist
 
-- [ ] All purpose strings in Info.plist are specific and clear
+### Permission Usage Descriptions (Critical - Common Rejection Reason)
+- [ ] Verified ALL required Info.plist permission keys are present
+- [ ] Each permission description explains the SPECIFIC feature using it
+- [ ] No vague descriptions ("for app functionality", "required", "needed")
+- [ ] Descriptions are written from user's perspective (benefit to them)
+- [ ] Only requesting permissions the app actually uses
+- [ ] Permissions requested contextually (not all at app launch)
+
+### Tracking & Privacy
 - [ ] ATT prompt shown before any tracking (iOS 14.5+)
 - [ ] NSUserTrackingUsageDescription in Info.plist
-- [ ] Account deletion accessible within app (not just website link)
-- [ ] Privacy policy link in app settings
 - [ ] No tracking if user denies ATT
+- [ ] Privacy policy link in app settings
+
+### Account & Data
+- [ ] Account deletion accessible within app (not just website link)
 - [ ] Sensitive data stored in Keychain, not AsyncStorage
 - [ ] HTTPS for all API calls
 - [ ] No hardcoded secrets in JavaScript bundle
