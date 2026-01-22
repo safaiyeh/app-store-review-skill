@@ -356,4 +356,134 @@ const LoginScreen = () => {
 - [ ] No App Store-like interfaces for third-party content
 - [ ] Extensions/widgets don't contain ads or IAP
 - [ ] Push notifications are optional and have opt-out
+- [ ] App is responsive and functional on iPad (reviewers test on iPads)
+
+---
+
+## Practical Review Considerations (Unofficial)
+
+> **Note:** The following are not official App Store Review Guidelines but are important practical considerations based on how Apple reviews apps.
+
+### iPad Responsiveness
+
+Apple reviewers frequently test apps on iPads, even for iPhone-only apps. Your app must be responsive and functional on iPad to avoid rejection.
+
+- [ ] Test your app on iPad simulator before submission
+- [ ] Ensure layouts don't break on larger screens
+- [ ] UI elements should be appropriately sized and positioned
+- [ ] Navigation should work correctly on iPad
+- [ ] Modal presentations should display properly
+
+**React Native implementation:**
+```typescript
+import { useWindowDimensions, Platform } from 'react-native';
+
+// ✅ GOOD: Responsive design that works on iPad
+const ResponsiveComponent = () => {
+  const { width, height } = useWindowDimensions();
+  const isTablet = width >= 768;
+
+  return (
+    <View style={[
+      styles.container,
+      isTablet && styles.tabletContainer
+    ]}>
+      {/* Adapt layout based on screen size */}
+    </View>
+  );
+};
+
+// ✅ GOOD: Check if running on iPad
+const isIPad = Platform.OS === 'ios' && Platform.isPad;
+
+// ✅ GOOD: Use flex layouts that adapt to screen size
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  tabletContainer: {
+    paddingHorizontal: 48,
+    maxWidth: 800,
+    alignSelf: 'center',
+  },
+});
+```
+
+**Expo considerations:**
+```typescript
+import { useWindowDimensions } from 'react-native';
+import Constants from 'expo-constants';
+
+// Check device type in Expo
+const deviceType = Constants.deviceType;
+// 1 = Phone, 2 = Tablet, 3 = Desktop
+```
+
+**Swift implementation:**
+```swift
+import UIKit
+
+// ✅ GOOD: Check if running on iPad
+let isIPad = UIDevice.current.userInterfaceIdiom == .pad
+
+// ✅ GOOD: Adaptive layouts using size classes
+class ResponsiveViewController: UIViewController {
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        updateLayoutForCurrentTraitCollection()
+    }
+
+    private func updateLayoutForCurrentTraitCollection() {
+        if traitCollection.horizontalSizeClass == .regular {
+            // iPad or large screen layout
+            configureTabletLayout()
+        } else {
+            // iPhone or compact layout
+            configurePhoneLayout()
+        }
+    }
+
+    private func configureTabletLayout() {
+        // Wider margins, larger touch targets, split views
+    }
+
+    private func configurePhoneLayout() {
+        // Standard phone layout
+    }
+}
+
+// ✅ GOOD: Using Auto Layout constraints that adapt
+class AdaptiveView: UIView {
+    private func setupConstraints() {
+        NSLayoutConstraint.activate([
+            // Use readable content guide for text on iPad
+            contentView.leadingAnchor.constraint(equalTo: readableContentGuide.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: readableContentGuide.trailingAnchor),
+        ])
+    }
+}
+
+// ✅ GOOD: SwiftUI adaptive layout
+import SwiftUI
+
+struct ResponsiveView: View {
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+
+    var body: some View {
+        if horizontalSizeClass == .regular {
+            // iPad layout
+            HStack {
+                SidebarView()
+                ContentView()
+            }
+        } else {
+            // iPhone layout
+            NavigationStack {
+                ContentView()
+            }
+        }
+    }
+}
+```
 
