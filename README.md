@@ -6,13 +6,18 @@ An AI agent skill that exhaustively evaluates iOS, macOS, tvOS, watchOS, and vis
 
 ## Installation
 
-Install the skill using [skills.sh](https://skills.sh):
+### Claude Code Plugin Marketplace
+
+```bash
+/plugin marketplace add safaiyeh/app-store-review-skill
+/plugin install app-store-review@app-store-review
+```
+
+### skills.sh
 
 ```bash
 npx skills add safaiyeh/app-store-review-skill
 ```
-
-This command downloads the skill into your project's `.skills/` directory, making it available to AI coding agents.
 
 ## Setup
 
