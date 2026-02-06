@@ -166,7 +166,7 @@ const sendPrankSMS = () => { }; // REJECTION
 
 ## 1.2 User-Generated Content
 
-Apps with user-generated content present particular challenges. To prevent abuse, apps with UGC or social networking services MUST include:
+Apps with user-generated content present particular challenges, ranging from intellectual property infringement to anonymous bullying. To prevent abuse, apps with UGC or social networking services MUST include:
 
 ### Required UGC Features (ALL MANDATORY)
 
@@ -244,10 +244,11 @@ const SUPPORT_URL = 'https://example.com/support';
 
 Apps primarily used for the following will be removed WITHOUT notice:
 - Pornographic content
+- Chatroulette-style experiences
+- Random or anonymous chat
 - Objectification of real people (e.g., "hot-or-not" voting)
 - Making physical threats
 - Bullying
-- Chatroulette-style experiences
 
 ### Incidental Mature "NSFW" Content
 
