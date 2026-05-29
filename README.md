@@ -6,6 +6,18 @@ An AI agent skill that exhaustively evaluates iOS, macOS, tvOS, watchOS, and vis
 
 ## Installation
 
+### Codex
+
+Add this repository as a Codex plugin marketplace:
+
+```bash
+codex plugin marketplace add safaiyeh/app-store-review-skill
+```
+
+Then open Codex, run `/plugins`, choose the App Store Review marketplace, and install the `app-store-review` plugin. Start a new thread and invoke the skill with `$app-store-review` or ask for an App Store compliance review.
+
+Codex also discovers direct local skills from `~/.agents/skills`, but plugins are the recommended distribution path for reusable skills.
+
 ### Claude Code Plugin Marketplace
 
 ```bash
@@ -23,8 +35,9 @@ npx skills add safaiyeh/app-store-review-skill
 
 ### Supported AI Agents
 
-This skill works with any AI coding agent that supports the skills.sh standard:
+This skill works with Codex and AI coding agents that support the skills.sh standard:
 
+- [Codex](https://openai.com/codex/)
 - [Claude Code](https://claude.ai/code)
 - [Cursor](https://cursor.sh)
 - [Windsurf](https://codeium.com/windsurf)
@@ -58,6 +71,12 @@ SKILLS_NO_TELEMETRY=1 npx skills add safaiyeh/app-store-review-skill
 
 ```
 app-store-review-skill/
+├── .agents/
+│   └── plugins/marketplace.json # Codex plugin marketplace
+├── .codex-plugin/
+│   └── plugin.json              # Codex plugin manifest
+├── agents/
+│   └── openai.yaml             # Codex UI metadata
 ├── SKILL.md                    # Index with quick reference & checklist
 └── rules/
     ├── 1-safety.md             # Section 1: Safety guidelines
