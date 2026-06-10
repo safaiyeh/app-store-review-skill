@@ -4,6 +4,8 @@ An AI agent skill that exhaustively evaluates iOS, macOS, tvOS, watchOS, and vis
 
 **Supports:** Swift, Objective-C, **React Native**, and **Expo** apps
 
+**Current through:** Apple's official June 8, 2026 App Review Guidelines update
+
 ## Installation
 
 ### Codex
@@ -168,7 +170,9 @@ Key packages covered:
 - Account creation without deletion
 - IAP without restore purchases
 - UGC without moderation
+- UGC without removal workflows or a compliance improvement plan
 - Kids apps without parental gates
+- Live Activities or push notifications used for spam, phishing, or unsolicited messages
 
 ### Medium-Risk Issues
 - Vague purpose strings

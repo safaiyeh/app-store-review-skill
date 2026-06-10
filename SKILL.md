@@ -4,7 +4,7 @@ description: Evaluates code against Apple's App Store Review Guidelines. Use thi
 license: MIT
 metadata:
   author: safaiyeh
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 # App Store Review Guidelines Checker
@@ -12,6 +12,8 @@ metadata:
 Comprehensive guide for evaluating iOS, macOS, tvOS, watchOS, and visionOS app code against Apple's App Store Review Guidelines. This skill covers EVERY guideline point to identify potential rejection issues before submission.
 
 **Supports:** Swift, Objective-C, React Native, and Expo apps
+
+**Guidelines current through:** Apple's June 8, 2026 App Review Guidelines update.
 
 ## When to Apply
 
@@ -145,6 +147,8 @@ console.log('debug'); // Remove or wrap in __DEV__
 ### Safety (Section 1.x)
 - [ ] No objectionable content
 - [ ] UGC moderation implemented (filter, report, block, contact)
+- [ ] UGC violations can be removed quickly and backed by a remediation plan
+- [ ] Kids and teens receive age-appropriate experiences inside the app
 - [ ] Parental gates for Kids Category apps
 - [ ] No false information or prank features
 - [ ] Medical disclaimers if applicable
@@ -164,6 +168,8 @@ console.log('debug'); // Remove or wrap in __DEV__
 - [ ] Sufficient native functionality (not just web wrapper)
 - [ ] No copycat concerns
 - [ ] Original app name and branding
+- [ ] No duplicate Bundle ID spam or low-effort saturated-category clones
+- [ ] Live Activities, push notifications, and Game Center are not used for spam, phishing, or unsolicited messages
 - [ ] Extensions comply with guidelines
 - [ ] Login alternatives if using social login
 - [ ] Not monetizing built-in capabilities
@@ -180,6 +186,8 @@ console.log('debug'); // Remove or wrap in __DEV__
 ## References
 
 - [App Store Review Guidelines](https://developer.apple.com/app-store/review/guidelines/)
+- [Apple Developer Program License Agreement](https://developer.apple.com/support/terms/apple-developer-program-license-agreement/)
+- [June 8, 2026 App Review Guidelines update](https://developer.apple.com/news/?id=a233fmpw)
 - [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/)
 - [App Store Connect Help](https://developer.apple.com/help/app-store-connect/)
 - [Apple Developer Documentation](https://developer.apple.com/documentation/)

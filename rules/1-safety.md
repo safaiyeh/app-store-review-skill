@@ -7,6 +7,13 @@ description: App Store Review Guidelines Section 1 - Safety (objectionable conte
 
 Apps should not include content that is offensive, insensitive, upsetting, intended to disgust, in exceptionally poor taste, or just plain creepy.
 
+## Current Apple Emphasis
+
+Apple's June 8, 2026 update revised kid and teen safety guidance. When reviewing an app that children or teens may use, do not rely only on platform parental controls:
+- [ ] Confirm the in-app experience is age-appropriate for the audience actually using it
+- [ ] Check onboarding, discovery, recommendations, messaging, ads, and UGC surfaces for age-inappropriate exposure
+- [ ] Treat inaccurate age ratings or weak age gates as safety risks, not just metadata issues
+
 ## 1.1 Objectionable Content
 
 ### 1.1.1 Defamatory, Discriminatory, or Mean-Spirited Content
@@ -255,6 +262,9 @@ Apps primarily used for the following will be removed WITHOUT notice:
 If your app includes user-generated content from a web-based service:
 - [ ] Mature content MUST be hidden by default
 - [ ] Only displayed when user explicitly enables it via your website
+- [ ] Violating content must be removable quickly when detected or reported
+- [ ] App Review may require a concrete compliance improvement plan before the app can stay on the App Store
+- [ ] Egregious or repeated UGC failures can trigger immediate app removal and Developer Program removal
 
 ```typescript
 // React Native - REQUIRED: NSFW content hidden by default
@@ -269,6 +279,34 @@ useEffect(() => {
   };
   checkMatureContentSetting();
 }, []);
+```
+
+### Developer Responsibility for Violating UGC
+
+Apple's current 1.2 language makes the developer responsible for removing content that violates the guideline, the app's terms of service, or community standards. If Apple finds violating content, expect to remove it and explain how compliance will improve.
+
+**Review for:**
+- [ ] Admin/moderator tooling that can remove posts, comments, profiles, messages, media, and creator content
+- [ ] Abuse queues or dashboards with timestamps, severity, status, and reviewer actions
+- [ ] Escalation paths for threats, bullying, sexual content, child safety issues, and repeat offenders
+- [ ] Audit logs that can support an App Review response or remediation plan
+- [ ] Clear terms/community standards surfaced to users and enforced consistently
+
+```typescript
+// React Native/backend contract - REQUIRED for UGC apps
+type ModerationStatus = 'pending' | 'actioned' | 'dismissed' | 'escalated';
+
+interface ModerationAction {
+  reportId: string;
+  contentId: string;
+  action: 'remove_content' | 'suspend_user' | 'age_restrict' | 'dismiss';
+  reason: string;
+  status: ModerationStatus;
+}
+
+const removeViolatingContent = async (action: ModerationAction): Promise<void> => {
+  await api.post('/moderation/actions', action);
+};
 ```
 
 ### 1.2.1 Creator Content
