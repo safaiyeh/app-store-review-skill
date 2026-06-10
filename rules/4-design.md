@@ -119,13 +119,26 @@ If mirroring specific software/services (not generic host device):
 ## 4.3 Spam
 
 ### 4.3(a) Bundle ID Restrictions
-- [ ] Don't create multiple Bundle IDs for same app
-- [ ] Use single app with in-app purchase for variations
+- [ ] Don't create multiple Bundle IDs for the same app
+- [ ] Do not submit separate variants for each city, sports team, university, location, customer, or minor content change
+- [ ] Use one app with search, configuration, downloadable content, or in-app purchase for legitimate variations
+- [ ] Flag app-generator workflows that mint many near-identical apps from the same template
 
 ### 4.3(b) Category Saturation
-- [ ] Avoid piling into saturated categories
-- [ ] Such apps rejected unless unique, high-quality
-- [ ] Spamming may lead to Developer Program removal
+- [ ] Do not submit apps that are indistinguishable from what is already widely available
+- [ ] Opportunistic variants of existing categories or popular apps degrade App Store discovery and overall quality
+- [ ] Saturated examples include dating, flashlight, sound effects, wallpaper, simple timers, and fortune telling apps
+- [ ] New submissions in saturated categories need a meaningfully different or improved experience
+- [ ] Existing apps in these categories may be removed if they are not updated, improved, or attracting customers
+- [ ] Low-quality or low-effort examples include drinking games, Kama Sutra, fart, and burp apps
+- [ ] Repeated submissions of mediocre, low-quality, or low-effort apps may lead to Developer Program removal
+
+**Code and repository patterns to flag:**
+```typescript
+// FLAG: white-label spam with only metadata or asset swaps
+const APP_VARIANT = 'city_042'; // Review whether this should be one searchable app
+const ENABLED_TEAM = 'team_red'; // Review if separate Bundle IDs exist per team
+```
 
 ---
 
@@ -183,9 +196,25 @@ If mirroring specific software/services (not generic host device):
 - [ ] Only share data to support/improve app experience
 - [ ] NOT for user identification or ad targeting
 
-### 4.5.3 Do Not Spam Apple Services
-- [ ] Do NOT spam via Game Center, Push Notifications, other Apple services
+### 4.5.3 Do Not Spam, Phish, or Send Unsolicited Messages via Apple Services
+- [ ] Do NOT spam via Game Center, Push Notifications, Live Activities, or other Apple services
+- [ ] Do NOT phish customers through Apple services
+- [ ] Do NOT send unsolicited messages through Apple services
 - [ ] Do NOT exploit Player IDs, aliases, or other information
+
+**Live Activities review points:**
+- [ ] Live Activities are tied to a user-initiated, time-bound activity
+- [ ] Activity updates are factual and directly related to the active event
+- [ ] ActivityKit push updates are not used as an extra marketing or messaging channel
+- [ ] Users can end or control the Live Activity where appropriate
+
+```swift
+// FLAG: Live Activity used for unsolicited promotion instead of active event state
+try await activity.update(ActivityContent(
+    state: PromotionState(message: "Limited time offer"),
+    staleDate: nil
+))
+```
 
 ### 4.5.4 Push Notifications
 - [ ] NOT required for app to function
@@ -486,4 +515,3 @@ struct ResponsiveView: View {
     }
 }
 ```
-
