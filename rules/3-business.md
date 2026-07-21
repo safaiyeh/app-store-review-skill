@@ -5,6 +5,11 @@ description: App Store Review Guidelines Section 3 - Business (in-app purchase, 
 
 # 3. BUSINESS
 
+**Section intro (enforcement-relevant):**
+- [ ] If your business model isn't obvious, explain it in metadata and App Review notes — unclear monetization delays review and may trigger rejection
+- [ ] No "rip-off" pricing: Apple rejects expensive apps that try to cheat users with irrationally high prices
+- [ ] Manipulating reviews, inflating chart rankings with paid/incentivized/filtered/fake feedback, or hiring third-party services to do so can lead to expulsion from the Apple Developer Program
+
 ## 3.1 Payments
 
 ### 3.1.1 In-App Purchase
@@ -42,31 +47,30 @@ func purchasePremiumFeature() {
 }
 ```
 
-**React Native implementation (react-native-iap):**
+**React Native implementation (RevenueCat — recommended):**
 ```typescript
-// REQUIRED: Use react-native-iap for digital goods
-import * as IAP from 'react-native-iap';
+// RECOMMENDED: RevenueCat (react-native-purchases) — wraps StoreKit, so it
+// satisfies the IAP requirement while handling receipts, entitlements, and
+// cross-platform subscription state for you.
+// Expo: requires a development build (not Expo Go).
+import Purchases from 'react-native-purchases';
 
-const productIds = ['com.app.premium', 'com.app.coins_100'];
+// Configure once at app start
+Purchases.configure({ apiKey: REVENUECAT_APPLE_API_KEY });
 
-// Initialize and get products
-const initializeIAP = async () => {
-  await IAP.initConnection();
-  const products = await IAP.getProducts({ skus: productIds });
-  return products;
-};
-
-// ✅ GOOD: Using In-App Purchase
-const purchasePremiumFeature = async (sku: string) => {
-  try {
-    await IAP.requestPurchase({ sku });
-  } catch (error) {
-    console.error('Purchase failed:', error);
+// ✅ GOOD: Purchase digital goods through StoreKit via RevenueCat
+const purchasePremiumFeature = async () => {
+  const offerings = await Purchases.getOfferings();
+  const pkg = offerings.current?.availablePackages[0];
+  if (!pkg) return;
+  const { customerInfo } = await Purchases.purchasePackage(pkg);
+  if (customerInfo.entitlements.active['premium']) {
+    unlockPremium();
   }
 };
 
 // ❌ BAD: External payment for digital goods
-const purchasePremiumFeature = () => {
+const purchasePremiumFeatureBad = () => {
   // REJECTION for digital content!
   Linking.openURL('https://stripe.com/checkout');
   Linking.openURL('https://paypal.com/checkout');
@@ -78,6 +82,8 @@ const purchasePhysicalProduct = () => {
   Linking.openURL('https://yourstore.com/checkout');
 };
 ```
+
+Lower-level alternative: `react-native-iap` (you manage receipt validation, restore, and transaction lifecycle yourself — see Best Practices below).
 
 **Tips and Credits:**
 - [ ] Apps may use IAP currencies to enable "tipping" developers or content providers
@@ -157,6 +163,7 @@ const handleLootBoxPurchase = () => {
 - [ ] Use Non-Consumable IAP at Price Tier 0
 - [ ] Naming convention: "XX-day Trial"
 - [ ] Must clearly identify: duration, content no longer accessible after trial, downstream charges
+- [ ] Manage content access and trial duration using Receipts and DeviceCheck
 
 **NFTs:**
 - [ ] May use IAP for minting, listing, transferring NFT services
@@ -167,16 +174,21 @@ const handleLootBoxPurchase = () => {
 
 ### 3.1.1(a) Link to Other Purchase Methods
 
+**General:**
+- [ ] Entitlements allow a link to a website the developer owns or maintains responsibility for, to purchase digital content or services
+- [ ] US storefront: NO entitlement required — apps may include buttons, external links, or other calls to action freely
+
 **StoreKit External Purchase Link Entitlements:**
-- [ ] Available in specific regions only
-- [ ] May include link to developer website for other purchase methods
-- [ ] May inform users of lower prices elsewhere
-- [ ] US storefront apps may include external purchase links without entitlement
+- [ ] Available in specific regions only (iOS/iPadOS App Store)
+- [ ] May include link to developer website informing users of other ways to purchase digital goods or services
+- [ ] Link may state where and how to purchase, and that items may be available for a comparatively lower price
+- [ ] All other storefronts (except US, where the prohibition does not apply): apps AND their metadata may NOT include buttons, external links, or other calls to action that direct customers to purchasing mechanisms other than IAP
 
 **Music Streaming Services Entitlements:**
-- [ ] May include link/buy button to developer website
-- [ ] May invite users to provide email for purchase links
-- [ ] Limited to specific storefronts
+- [ ] May include link (or buy button) to developer website informing users of other ways to purchase digital music content or services
+- [ ] May invite users to provide email for the express purpose of sending a purchase link
+- [ ] Link may inform users where and how to purchase, and the price of items
+- [ ] Limited to specific storefronts; in all other storefronts, streaming music apps AND their metadata may NOT include buttons, external links, or other calls to action to non-IAP purchasing
 
 **Fraud and Misconduct:**
 Misleading marketing, scams, or fraud results in removal from App Store and potentially Developer Program.
@@ -184,6 +196,7 @@ Misleading marketing, scams, or fraud results in removal from App Store and pote
 ### 3.1.2 Subscriptions
 
 **Core Requirements:**
+- [ ] Auto-renewable subscriptions allowed regardless of App Store category
 - [ ] Must provide ongoing value to customer
 - [ ] Minimum 7-day subscription period
 - [ ] Must be available across all user's devices
@@ -208,6 +221,7 @@ Misleading marketing, scams, or fraud results in removal from App Store and pote
 - [ ] Must work on all user's devices
 - [ ] User should get value without additional tasks (posting to social media, uploading contacts, etc.)
 - [ ] May include consumable credits, gems, currencies
+- [ ] May offer subscriptions that include access to discounted consumable goods (e.g. platinum membership exposing gem-packs at reduced price)
 - [ ] When changing to subscription model, don't remove functionality existing users paid for
 - [ ] May offer free trial periods
 
@@ -215,7 +229,8 @@ Misleading marketing, scams, or fraud results in removal from App Store and pote
 Apps attempting to scam users or use bait-and-switch tactics will be REMOVED.
 
 **Cellular Carrier Bundling:**
-- [ ] Requires prior Apple approval
+- [ ] Carrier apps may bundle auto-renewable music and video subscriptions with NEW cellular data plans, with prior Apple approval
+- [ ] Other subscription types may be bundled with new plans only if the carrier app also supports IAP for users (prior Apple approval required)
 - [ ] Cannot include access to or discounts on consumable items
 - [ ] Must terminate coincident with cellular data plan
 
@@ -257,13 +272,16 @@ struct SubscriptionInfo {
 
 ### 3.1.3 Other Purchase Methods
 
-The following may use purchase methods other than IAP:
+The following may use purchase methods other than IAP. Important preamble rules:
+- [ ] Apps in this section cannot, within the app, encourage users to use a purchasing method other than IAP — EXCEPT apps on the US storefront and as set forth in 3.1.1(a) and 3.1.3(a)
+- [ ] Developers CAN send communications outside the app to their user base about non-IAP purchasing methods
 
 #### 3.1.3(a) "Reader" Apps
 - [ ] May allow access to previously purchased content (magazines, newspapers, books, audio, music, video)
 - [ ] May offer free tier account creation
 - [ ] May offer account management for existing customers
-- [ ] May apply for External Link Account Entitlement
+- [ ] May apply for External Link Account Entitlement: an informational link to a website the developer owns or maintains responsibility for, to create or manage an account
+- [ ] US storefront: entitlement NOT required for buttons, external links, or other calls to action
 
 #### 3.1.3(b) Multiplatform Services
 - [ ] May allow access to content acquired on other platforms/web
@@ -279,7 +297,7 @@ The following may use purchase methods other than IAP:
 - [ ] One-to-few and one-to-many MUST use IAP
 
 #### 3.1.3(e) Goods and Services Outside of the App
-- [ ] Physical goods consumed outside app MUST use payment methods other than IAP (Apple Pay, credit card)
+- [ ] Physical goods or services consumed outside app MUST use payment methods other than IAP (Apple Pay, credit card)
 
 #### 3.1.3(f) Free Stand-alone Apps
 - [ ] Free companions to paid web tools (VoIP, cloud storage, email, web hosting)
@@ -389,18 +407,19 @@ import { ethers } from 'ethers';
 - [ ] Cannot use IAP
 
 #### (vi) Approved Nonprofits
-- [ ] Approved nonprofits may fundraise directly
+- [ ] Approved nonprofits may fundraise directly within their own apps or third-party apps
 - [ ] Must offer Apple Pay support
 - [ ] Must disclose fund usage
 - [ ] Must abide by all laws
 - [ ] Must ensure tax receipts available to donors
+- [ ] Additional information must be provided to App Review upon request
 - [ ] Nonprofit platforms must ensure all listed nonprofits are approved
 
 #### (vii) Monetary Gifts
 - [ ] May enable monetary gifts between individuals
 - [ ] Must be completely optional
 - [ ] 100% of funds must go to receiver
-- [ ] Gifts connected to digital content MUST use IAP
+- [ ] Gifts connected to or associated at any point in time with receiving digital content or services MUST use IAP
 
 #### (viii) Financial Services
 - [ ] Trading, investing, money management apps must be from financial institution
@@ -409,7 +428,9 @@ import { ethers } from 'ethers';
 ### 3.2.2 Unacceptable
 
 #### (i) App Store-Like Interfaces
-- [ ] Cannot create interface displaying third-party apps similar to App Store
+- [ ] Cannot create interface for displaying third-party apps, extensions, or plug-ins similar to the App Store or as a general-interest collection
+
+#### (ii) Intentionally omitted
 
 #### (iii) Ad Manipulation
 - [ ] Cannot artificially increase ad impressions or click-throughs
@@ -422,12 +443,14 @@ import { ethers } from 'ethers';
 #### (v) Arbitrary User Restriction
 - [ ] Cannot arbitrarily restrict users by location or carrier
 
+#### (vi) Intentionally omitted
+
 #### (vii) Artificial Status Manipulation
-- [ ] Cannot artificially manipulate user visibility/status/rank on other services
+- [ ] Cannot artificially manipulate user visibility/status/rank on other services — UNLESS permitted by that service's Terms and Conditions
 
 #### (viii) Derivatives Trading
 - [ ] Binary options trading apps NOT permitted
-- [ ] CFDs and other derivatives apps must be properly licensed
+- [ ] CFDs and other derivatives apps must be properly licensed in all jurisdictions where the service is available
 
 #### (ix) Personal Loan Apps
 **Must clearly disclose:**
@@ -445,18 +468,48 @@ import { ethers } from 'ethers';
 
 In order to access functionality, content, or use the app.
 
+**Allowed:** Apps may otherwise incentivize users to take specific actions within apps (e.g. completing a level, watching an ad).
+
 ---
 
 ## React Native Packages Reference
 
 | Guideline | Relevant Packages |
 |-----------|------------------|
-| In-App Purchase | `react-native-iap` |
-| Subscriptions | `react-native-iap` (handles subscriptions too) |
-| Apple Pay | `@stripe/stripe-react-native`, `react-native-payments` |
+| In-App Purchase | `react-native-purchases` (RevenueCat, recommended), `react-native-iap` |
+| Subscriptions | `react-native-purchases` + `react-native-purchases-ui` (paywalls), `react-native-iap` |
+| Apple Pay | `@stripe/stripe-react-native` |
 | Crypto Wallets | `ethers`, `web3` (organization accounts only) |
 
 ## React Native IAP Best Practices
+
+**Recommended: RevenueCat (`react-native-purchases`).** It handles receipt validation, restore, entitlement state, and subscription lifecycle server-side, which removes most of the manual compliance surface below:
+
+```typescript
+import Purchases from 'react-native-purchases';
+
+// 1. Configure once at app start (App.tsx)
+Purchases.configure({ apiKey: REVENUECAT_APPLE_API_KEY });
+
+// 2. Gate features on entitlements, not local flags
+const isPremium = async () => {
+  const info = await Purchases.getCustomerInfo();
+  return info.entitlements.active['premium'] !== undefined;
+};
+
+// 3. REQUIRED by Apple: Restore purchases button
+const RestorePurchasesButton = () => (
+  <Button
+    title="Restore Purchases"
+    onPress={async () => {
+      await Purchases.restorePurchases();
+      Alert.alert('Restored', 'Your purchases have been restored.');
+    }}
+  />
+);
+```
+
+**Lower-level alternative: `react-native-iap`** (API shown is v12/v13; v14+ renamed several methods, e.g. `getProducts` → `fetchProducts`):
 
 ```typescript
 // Complete IAP setup for React Native

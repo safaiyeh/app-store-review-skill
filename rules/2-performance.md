@@ -9,13 +9,14 @@ description: App Store Review Guidelines Section 2 - Performance (app completene
 
 ### 2.1(a) Final Version Requirements
 
-**ALL submissions must be final versions with:**
+**ALL submissions (including apps made available for pre-order) must be final versions with:**
 - [ ] All necessary metadata complete
 - [ ] Fully functional URLs (no broken links)
 - [ ] No placeholder text ("Lorem ipsum", "Coming soon", "TBD")
 - [ ] No empty websites
 - [ ] No temporary content
 - [ ] Tested on-device for bugs and stability
+- [ ] Incomplete app bundles and binaries that crash or exhibit obvious technical problems will be REJECTED
 
 **Swift code patterns to flag:**
 ```swift
@@ -95,7 +96,7 @@ if (__DEV__) {
 
 ## 2.3 Accurate Metadata
 
-All metadata must accurately reflect core app experience and remain up-to-date.
+All metadata — including privacy information, app description, screenshots, and previews — must accurately reflect the core app experience and remain up-to-date.
 
 ### 2.3.1 Hidden/Undocumented Features and Misleading Marketing
 
@@ -107,7 +108,7 @@ All metadata must accurately reflect core app experience and remain up-to-date.
 - [ ] Generic descriptions will be REJECTED
 - [ ] All new features must be accessible for review
 
-**Misleading marketing grounds for REMOVAL:**
+**Misleading marketing — whether within or outside the App Store — is grounds for removal from the App Store, a block from installing via alternative distribution, and termination of the developer account:**
 - Promoting content/services app doesn't offer
 - iOS virus/malware scanners (not actually possible)
 - Promoting false prices
@@ -119,12 +120,13 @@ Egregious or repeated behavior results in removal from Apple Developer Program.
 ### 2.3.2 In-App Purchase Disclosure
 
 - [ ] Description, screenshots, and previews must clearly indicate items requiring additional purchases
-- [ ] IAP Display Name, Screenshot, and Description must be appropriate for public audience
-- [ ] App must properly handle `SKPaymentTransactionObserver` `paymentQueue` method for seamless IAP completion
+- [ ] If promoting IAPs on the App Store: IAP Display Name, Screenshot, and Description must be appropriate for public audience, follow the "Promoting Your In-App Purchases" guidance, and the app must properly handle `SKPaymentTransactionObserver` so customers can seamlessly complete the purchase at launch
 
 **Swift implementation:**
 ```swift
-// REQUIRED: Proper IAP observer handling
+// REQUIRED (when promoting IAPs on the App Store): handle pending
+// transactions at launch. StoreKit 1 shown to match the guideline text;
+// with StoreKit 2, listen to Transaction.updates instead.
 class PaymentObserver: NSObject, SKPaymentTransactionObserver {
     func paymentQueue(_ queue: SKPaymentQueue,
                       updatedTransactions transactions: [SKPaymentTransaction]) {
@@ -244,11 +246,15 @@ const restorePurchases = async () => {
 - [ ] Not reference other apps
 - [ ] Not make unverifiable product claims
 
+**Additional rules:**
+- [ ] Metadata (names, subtitles, screenshots, previews) must not include prices, terms, or descriptions that are not specific to that metadata type
+- [ ] Apple may modify inappropriate keywords at any time or take other steps to prevent abuse
+
 ### 2.3.8 Age-Appropriate Metadata
 
 - [ ] Metadata must be appropriate for ALL audiences
 - [ ] Icons, screenshots, previews must adhere to 4+ rating (even if app is rated higher)
-- [ ] Do NOT depict violence, weapons, or mature content in metadata
+- [ ] For games with violence: select images that don't depict a gruesome death or a gun pointed at a specific character
 - [ ] Terms "For Kids" and "For Children" reserved for Kids Category
 - [ ] Ensure all icon variants (small, large, Watch, alternates) are similar
 
@@ -260,7 +266,7 @@ const restorePurchases = async () => {
 ### 2.3.10 Platform Focus and Metadata Relevance
 
 - [ ] App should focus on Apple platforms it supports
-- [ ] Do NOT include names, icons, or imagery of other platforms (Android, Windows)
+- [ ] Do NOT include names, icons, or imagery of other platforms (Android, Windows) — UNLESS there is specific, approved interactive functionality
 - [ ] Do NOT include alternative app marketplace references
 - [ ] App metadata must focus on app itself
 
@@ -310,6 +316,7 @@ import googlePlayBadge from './assets/google-play-badge.png'; // Remove from iOS
 - [ ] Event metadata must be accurate and pertain to event (not app generally)
 - [ ] Events must happen at selected times/dates across storefronts
 - [ ] Event deep link must direct to proper destination
+- [ ] Events may be monetized, following the Section 3 Business rules
 
 ---
 
@@ -353,7 +360,7 @@ const App = () => {
 - [ ] Put unnecessary strain on device resources
 - [ ] Encourage placing device under mattress/pillow while charging
 - [ ] Perform excessive write cycles to SSD
-- [ ] Run unrelated background processes (e.g., cryptocurrency mining)
+- [ ] Run unrelated background processes (e.g., cryptocurrency mining) — this includes any third-party advertisements displayed within the app
 
 **Swift code patterns to flag:**
 ```swift
@@ -427,7 +434,8 @@ for (let i = 0; i < 1000000; i++) {
 
 #### 2.4.5(i) Sandboxing and File System
 - [ ] Must be appropriately sandboxed
-- [ ] Only use appropriate macOS APIs for modifying user data
+- [ ] Must follow macOS File System Documentation
+- [ ] Only use appropriate macOS APIs for modifying user data stored by OTHER apps (e.g. bookmarks, Address Book, Calendar entries)
 
 #### 2.4.5(ii) Packaging and Installation
 - [ ] Must be packaged using Xcode technologies
@@ -436,8 +444,8 @@ for (let i = 0; i < 1000000; i++) {
 - [ ] Cannot install code/resources in shared locations
 
 #### 2.4.5(iii) Auto-Launch and Startup Code
-- [ ] May NOT auto-launch without consent
-- [ ] May NOT spawn processes continuing after user quits
+- [ ] May NOT auto-launch or have other code run automatically at startup or login without consent
+- [ ] May NOT spawn processes that continue running after user quits, without consent
 - [ ] Should NOT automatically add Dock icons or desktop shortcuts
 
 #### 2.4.5(iv) Code and Resource Installation
@@ -535,14 +543,17 @@ FileManager.default.createFile(atPath: "/usr/local/bin/app") // REJECTION
 
 **React Native code patterns to flag:**
 ```typescript
-// ⚠️ CRITICAL: CodePush and OTA Updates
-// CodePush IS allowed but with restrictions!
+// ⚠️ CRITICAL: OTA JS updates (expo-updates, self-hosted CodePush)
+// OTA updates ARE allowed but with restrictions!
+// Note: Microsoft's hosted CodePush service (App Center) was retired in
+// March 2025 — react-native-code-push now requires a self-hosted server.
+// expo-updates is the maintained mainstream path.
 
-// ✅ ALLOWED: Bug fixes and minor changes via CodePush
-import codePush from 'react-native-code-push';
-codePush.sync(); // OK for bug fixes
+// ✅ ALLOWED: Bug fixes and minor changes via OTA update
+import * as Updates from 'expo-updates';
+await Updates.fetchUpdateAsync(); // OK for bug fixes
 
-// ❌ NOT ALLOWED: Significant feature changes via CodePush
+// ❌ NOT ALLOWED: Significant feature changes via OTA update
 // - Adding new screens/features
 // - Changing app's primary purpose
 // - Bypassing App Review for major updates
@@ -569,12 +580,13 @@ Egregious violations result in removal from Apple Developer Program.
 
 ### 2.5.4 Multitasking Background Services
 
-Background services may ONLY be used for intended purposes:
+Background services may ONLY be used for intended purposes (non-exhaustive list):
 - [ ] VoIP
 - [ ] Audio playback
 - [ ] Location
 - [ ] Task completion
 - [ ] Local notifications
+- [ ] etc. — other legitimate background purposes exist; the test is that the mode matches its intended purpose
 
 **Swift configuration:**
 ```swift
@@ -654,8 +666,8 @@ const socket = new WebSocket('wss://api.example.com/ws'); // Good
 
 ### 2.5.6 Web Browser Requirements
 
-- [ ] Apps browsing web MUST use appropriate WebKit framework
-- [ ] May apply for entitlement to use alternative web browser engine
+- [ ] Apps browsing web MUST use appropriate WebKit framework and WebKit JavaScript
+- [ ] May apply for entitlement to use alternative web browser engine (available for the EU and Japan)
 
 **Swift implementation:**
 ```swift
@@ -722,7 +734,7 @@ const MyWebView = () => (
 
 ### 2.5.13 Facial Recognition
 
-- [ ] Apps using facial recognition for authentication MUST use LocalAuthentication
+- [ ] Apps using facial recognition for authentication MUST use LocalAuthentication where possible
 - [ ] Do NOT use ARKit or other facial recognition for this purpose
 - [ ] Must use alternate authentication for users under 13
 
@@ -766,7 +778,7 @@ const authenticate = async () => {
 };
 
 // FLAG: Using vision/ML for face auth
-import { Camera } from 'react-native-camera';
+// (e.g. react-native-vision-camera frame processors + a face model)
 // Don't use camera-based face recognition for auth!
 // Must use device biometrics (Face ID/Touch ID)
 ```
@@ -816,7 +828,7 @@ import { Camera } from 'react-native-camera';
 - [ ] Clearly indicate they are ads
 - [ ] Not manipulate/trick users into tapping
 - [ ] Provide easily accessible close/skip buttons (large enough for easy dismissal)
-- [ ] Apps must include ability to report inappropriate ads
+- [ ] Apps must include ability to report any inappropriate or age-inappropriate ads
 
 ---
 
@@ -824,12 +836,12 @@ import { Camera } from 'react-native-camera';
 
 | Guideline | Expo Package | Bare RN Package |
 |-----------|-------------|-----------------|
-| In-App Purchase | `expo-in-app-purchases` | `react-native-iap` |
+| In-App Purchase | `react-native-purchases` (RevenueCat, dev build) | `react-native-purchases` (RevenueCat) or `react-native-iap` |
 | Biometric Auth | `expo-local-authentication` | `react-native-biometrics` |
 | WebView | - | `react-native-webview` |
-| Background Tasks | `expo-background-fetch`, `expo-task-manager` | `react-native-background-fetch` |
+| Background Tasks | `expo-background-task`, `expo-task-manager` | `react-native-background-fetch` |
 | Location | `expo-location` | `react-native-geolocation-service` |
-| OTA Updates | `expo-updates` | `react-native-code-push` |
+| OTA Updates | `expo-updates` | `react-native-code-push` (self-hosted server required) |
 | Secure Storage | `expo-secure-store` | `react-native-keychain` |
 | Device Info | `expo-device` | `react-native-device-info` |
 
@@ -841,6 +853,6 @@ import { Camera } from 'react-native-camera';
 - [ ] Test IAP flow end-to-end including restore
 - [ ] Verify no hardcoded IP addresses
 - [ ] Check all background modes are legitimately used
-- [ ] Ensure CodePush only delivers bug fixes, not features
+- [ ] Ensure OTA updates (expo-updates/CodePush) only deliver bug fixes, not features
 - [ ] Test on IPv6-only network
 - [ ] Verify biometrics use LocalAuthentication APIs

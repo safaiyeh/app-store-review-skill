@@ -4,7 +4,7 @@ description: Evaluates code against Apple's App Store Review Guidelines. Use thi
 license: MIT
 metadata:
   author: safaiyeh
-  version: "1.0.1"
+  version: "1.1.0"
 ---
 
 # App Store Review Guidelines Checker
@@ -34,7 +34,7 @@ Read individual rule files for detailed explanations, checklists, and code examp
 | **2. Performance** | [rules/2-performance.md](rules/2-performance.md) | App completeness, metadata accuracy, hardware compatibility, software requirements |
 | **3. Business** | [rules/3-business.md](rules/3-business.md) | In-app purchase, subscriptions, cryptocurrencies, other business models |
 | **4. Design** | [rules/4-design.md](rules/4-design.md) | Copycats, minimum functionality, spam, extensions, Apple services, login |
-| **5. Legal** | [rules/5-legal.md](rules/5-legal.md) | Privacy, data collection, intellectual property, gambling, VPN, MDM |
+| **5. Legal** | [rules/5-legal.md](rules/5-legal.md) | Privacy, data collection, intellectual property, gambling, VPN, MDM, developer code of conduct |
 
 ## Risk Levels by Category
 
@@ -102,8 +102,12 @@ analytics().logEvent('event'); // Without ATT prompt = REJECTION
 // 🟡 Account deletion via website only
 Linking.openURL('https://example.com/delete'); // Must be in-app!
 
-// 🟡 Social login without Sign in with Apple
-<GoogleSigninButton /> // Must also offer Apple login!
+// 🟡 Social login without a privacy-preserving alternative (4.8)
+<GoogleSigninButton /> // Also offer a login meeting 4.8 criteria
+                       // (Sign in with Apple is the simplest option)
+
+// 🟡 Custom review prompts (5.6.1)
+showCustomAlert('Rate us 5 stars!'); // Use StoreReview.requestReview()
 ```
 
 ### Medium-Risk Issues
@@ -177,9 +181,11 @@ console.log('debug'); // Remove or wrap in __DEV__
 ### Legal (Section 5.x)
 - [ ] No unlicensed third-party content
 - [ ] Proper Apple trademark usage
-- [ ] Gambling license if applicable
+- [ ] Gambling license if applicable (with real location-based geo-restriction)
 - [ ] VPN uses NEVPNManager API
 - [ ] COPPA/GDPR compliance for kids
+- [ ] Review prompts use the system API only (no custom prompts)
+- [ ] No review, chart, search, or referral manipulation (5.6)
 
 ---
 

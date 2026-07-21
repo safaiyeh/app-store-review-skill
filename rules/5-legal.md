@@ -1,9 +1,14 @@
 ---
 name: legal
-description: App Store Review Guidelines Section 5 - Legal (privacy, data collection, intellectual property, gambling, VPN, MDM)
+description: App Store Review Guidelines Section 5 - Legal (privacy, data collection, intellectual property, gambling, VPN, MDM, developer code of conduct)
 ---
 
 # 5. LEGAL
+
+**Section intro (enforcement-relevant):**
+- [ ] Apps must comply with ALL legal requirements in any location where they are made available — it's the developer's obligation to understand and conform to local laws
+- [ ] Apps that solicit, promote, or encourage criminal or clearly reckless behavior will be REJECTED
+- [ ] In extreme cases (e.g. apps facilitating human trafficking or exploitation of children), Apple will notify appropriate authorities
 
 ## 5.1 Privacy
 
@@ -19,7 +24,7 @@ description: App Store Review Guidelines Section 5 - Legal (privacy, data collec
 - [ ] Identify what data is collected
 - [ ] Identify how data is collected
 - [ ] Identify all uses of data
-- [ ] Confirm third parties provide equal protection
+- [ ] Confirm third parties with access to user data (analytics tools, ad networks, third-party SDKs, and any parent/subsidiary/related entities) provide equal protection
 - [ ] Explain data retention/deletion policies
 - [ ] Describe how user can revoke consent and request deletion
 
@@ -66,9 +71,6 @@ description: App Store Review Guidelines Section 5 - Legal (privacy, data collec
 <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 <string>Background location is used to notify you when you're near a saved store</string>
 
-<key>NSLocationAlwaysUsageDescription</key>
-<string>Background location tracks your running route even when the app is closed</string>
-
 <!-- MICROPHONE -->
 <key>NSMicrophoneUsageDescription</key>
 <string>Microphone is used for voice search and video calls with support</string>
@@ -77,23 +79,20 @@ description: App Store Review Guidelines Section 5 - Legal (privacy, data collec
 <key>NSContactsUsageDescription</key>
 <string>Contacts help you find friends already using the app</string>
 
-<!-- CALENDARS -->
-<key>NSCalendarsUsageDescription</key>
-<string>Calendar access lets you add event reminders directly to your calendar</string>
+<!-- CALENDARS (iOS 17+: full-access / write-only keys) -->
+<key>NSCalendarsFullAccessUsageDescription</key>
+<string>Calendar access lets you view and add event reminders directly to your calendar</string>
 
 <key>NSCalendarsWriteOnlyAccessUsageDescription</key>
 <string>Add workout sessions to your calendar</string>
 
-<!-- REMINDERS -->
-<key>NSRemindersUsageDescription</key>
+<!-- REMINDERS (iOS 17+) -->
+<key>NSRemindersFullAccessUsageDescription</key>
 <string>Create reminders for tasks you save in the app</string>
 
 <!-- BLUETOOTH -->
 <key>NSBluetoothAlwaysUsageDescription</key>
 <string>Bluetooth connects to your fitness tracker to sync workout data</string>
-
-<key>NSBluetoothPeripheralUsageDescription</key>
-<string>Connect to Bluetooth devices for data transfer</string>
 
 <!-- HEALTH -->
 <key>NSHealthShareUsageDescription</key>
@@ -207,7 +206,7 @@ description: App Store Review Guidelines Section 5 - Legal (privacy, data collec
 // react-native-permissions → Various depending on permissions requested
 // react-native-health → NSHealthShareUsageDescription, NSHealthUpdateUsageDescription
 // react-native-ble-plx → NSBluetoothAlwaysUsageDescription
-// react-native-touch-id → NSFaceIDUsageDescription
+// react-native-biometrics / expo-local-authentication → NSFaceIDUsageDescription
 
 // ✅ GOOD: Specific, clear purpose strings
 const INFO_PLIST_STRINGS = {
@@ -294,10 +293,12 @@ class PermissionManager {
 #### (v) Account Sign-In
 - [ ] Let users use app without login if no significant account-based features
 - [ ] If app supports account creation, MUST offer account deletion within app
-- [ ] Do NOT require personal info unless directly relevant to core functionality
+- [ ] Do NOT require personal info unless directly relevant to core functionality or required by law
+- [ ] Pulling basic profile info, sharing to the social network, or inviting friends are NOT considered core app functionality
 - [ ] If not related to social network, provide access without social login
-- [ ] Must include mechanism to revoke social network credentials
+- [ ] Must include mechanism to revoke social network credentials AND disable data access between app and social network from within the app
 - [ ] May not store social credentials off device
+- [ ] May only use credentials/tokens to directly connect to the social network from the app itself, while the app is in use
 
 **Swift implementation:**
 ```swift
@@ -381,10 +382,10 @@ const badDeleteAccount = () => {
 - [ ] May NOT track users without knowledge and consent
 
 #### (viii) Unauthorized Personal Information Compilation
-- [ ] Apps compiling personal info from sources not directly from user (including public databases) without explicit consent NOT permitted
+- [ ] Apps compiling personal info from sources not directly from user (including public databases) without explicit consent NOT permitted on the App Store or alternative distribution
 
 #### (ix) Highly Regulated Fields
-- [ ] Apps in banking, financial services, healthcare, gambling, legal cannabis, air travel, crypto exchanges should be from legal entity, not individual developer
+- [ ] Apps in banking, financial services, healthcare, gambling, legal cannabis, air travel, crypto exchanges — OR apps that require sensitive user information — should be from legal entity, not individual developer
 - [ ] Cannabis apps must be geo-restricted to legal jurisdictions
 
 #### (x) Basic Contact Information
@@ -491,7 +492,7 @@ const trackUser = async (userId: string) => {
 - [ ] Must show clear description of how message will appear
 
 #### (vi) Sensitive Health and Fitness Data
-**Data from these sources may NOT be used for marketing/advertising:**
+**Data from these sources may NOT be used for marketing, advertising, or use-based data mining (including by third parties):**
 - [ ] HomeKit API
 - [ ] HealthKit
 - [ ] Clinical Health Records API
@@ -518,10 +519,12 @@ const trackUser = async (userId: string) => {
 - [ ] May NOT store personal health info in iCloud
 
 #### (iii) Human Subject Research Consent
+- [ ] Consent from participants required — for minors, from their parent or guardian
+
 **Consent must include:**
 - [ ] Nature, purpose, and duration of research
 - [ ] Procedures, risks, and benefits
-- [ ] Confidentiality and data handling info
+- [ ] Confidentiality and data handling info (including any sharing with third parties)
 - [ ] Point of contact for questions
 - [ ] Withdrawal process
 
@@ -540,9 +543,10 @@ const trackUser = async (userId: string) => {
 
 #### (b) Third-Party Services in Kids Apps
 - [ ] Third-party analytics/advertising permitted only if adhering to Guideline 1.3
-- [ ] Apps collecting/transmitting/capable of sharing kids' personal data MUST:
+- [ ] Apps collecting/transmitting/capable of sharing kids' personal data (e.g. name, address, email, location, photos, videos, drawings, ability to chat, other personal data, or persistent identifiers combined with any of the above) MUST:
   - Include privacy policy
   - Comply with all applicable children's privacy statutes
+- [ ] Note: the Kids Category parental gate (Guideline 1.3) is generally NOT the same as securing parental consent to collect personal data under privacy statutes — both may be needed
 - [ ] Terms "For Kids" and "For Children" reserved for Kids Category
 - [ ] Non-Kids Category apps cannot imply main audience is children
 
@@ -599,7 +603,7 @@ locationManager.requestAlwaysAuthorization() // Only if background truly needed
 ### 5.2.5 Apple Products
 - [ ] Don't create apps confusingly similar to Apple products/interfaces
 - [ ] Apps, extensions, keyboards, Sticker packs may NOT include Apple emoji
-- [ ] Music previews only with link to iTunes/Apple Music
+- [ ] iTunes/Apple Music previews may NOT be used for their entertainment value (e.g. background music for a photo collage, game soundtrack) or in any other unauthorized manner
 - [ ] Activity rings should not mimic Activity control
 - [ ] Apple Weather data requires proper attribution
 
@@ -625,14 +629,31 @@ locationManager.requestAlwaysAuthorization() // Only if background truly needed
 - [ ] Lottery apps must have consideration, chance, and prize
 
 ```swift
-// REQUIRED: Geo-restriction for gambling apps
-func checkGamblingEligibility() -> Bool {
-    guard let region = Locale.current.region?.identifier else {
-        return false
-    }
+// REQUIRED: Geo-restriction for gambling apps.
+// Locale.current is a user-changeable device setting — it is NOT a
+// location check and does not satisfy the geo-restriction requirement.
+// Verify actual location (CoreLocation and/or server-side IP checks).
+import CoreLocation
 
-    let licensedRegions = ["US-NJ", "US-NV", "GB"] // Example
-    return licensedRegions.contains(region)
+func verifyGamblingEligibility(completion: @escaping (Bool) -> Void) {
+    let geocoder = CLGeocoder()
+    geocoder.reverseGeocodeLocation(currentLocation) { placemarks, _ in
+        guard let placemark = placemarks?.first,
+              let country = placemark.isoCountryCode else {
+            completion(false)
+            return
+        }
+        // Check licensed jurisdictions (state-level via administrativeArea)
+        let eligible = isLicensedJurisdiction(country: country,
+                                              state: placemark.administrativeArea)
+        completion(eligible)
+    }
+}
+
+// ❌ BAD: Locale-based "geo-restriction" — user can change region in Settings
+func checkGamblingEligibilityBad() -> Bool {
+    let region = Locale.current.region?.identifier
+    return ["US", "GB"].contains(region ?? "") // NOT a location check
 }
 ```
 
@@ -642,11 +663,13 @@ func checkGamblingEligibility() -> Bool {
 
 - [ ] Must use NEVPNManager API
 - [ ] Must be from developer enrolled as organization
+- [ ] Parental control, content blocking, and security apps from approved providers may also use the NEVPNManager API
 - [ ] Must declare data collection clearly before any user action
 - [ ] May NOT sell, use, or disclose data to third parties
 - [ ] Must commit to this in privacy policy
 - [ ] Must NOT violate local laws
 - [ ] If requiring VPN license in territory, provide in App Review Notes
+- [ ] Non-compliance: removal from App Store, blocked from alternative distribution, possible removal from Developer Program
 
 ```swift
 // REQUIRED: NEVPNManager API
@@ -669,9 +692,62 @@ let manager = NEVPNManager.shared()
 **Requirements:**
 - [ ] Request MDM capability from Apple
 - [ ] Declare data collection clearly before any user action
-- [ ] May NOT sell, use, or disclose data except for improving services to organization
-- [ ] Must commit to restrictions in privacy policy
+- [ ] May NOT sell, use, or disclose to third parties ANY data for ANY purpose — must commit to this in privacy policy
+- [ ] Limited exception: third-party analytics may be permitted ONLY for performance data about the MDM app itself — never data about the user, the user's device, or other apps on that device
+- [ ] Apps offering configuration profiles must adhere to the same requirements
 - [ ] Must NOT violate applicable laws
+- [ ] Non-compliance: removal from App Store, blocked from alternative distribution, possible removal from Developer Program
+
+---
+
+## 5.6 Developer Code of Conduct
+
+**Core principles:**
+- [ ] Treat everyone with respect — in App Store review responses, customer support, and communications with Apple
+- [ ] No harassment, discriminatory practices, intimidation, or bullying
+- [ ] Apps must never prey on users, rip off customers, trick them into unwanted purchases, force sharing of unnecessary data, raise prices in a tricky manner, or charge for undelivered features/content — manipulative practices within OR outside the app count
+- [ ] Repeated manipulative, misleading, or fraudulent conduct leads to removal from the Developer Program
+- [ ] Terminated accounts may seek restoration by providing a written statement detailing planned improvements
+
+### 5.6.1 App Store Reviews
+
+- [ ] Responses to reviews must be targeted to the user's comments — no personal information, spam, or marketing in responses
+- [ ] MUST use the provided API to prompt for reviews — custom review prompts are disallowed
+
+```swift
+// ✅ GOOD: System review prompt (the ONLY allowed prompt)
+import StoreKit
+
+if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+    AppStore.requestReview(in: scene) // SKStoreReviewController on older targets
+}
+
+// ❌ BAD: Custom review prompt UI — disallowed
+showCustomAlert("Enjoying the app? Rate us 5 stars!") // REJECTION
+```
+
+```typescript
+// React Native / Expo: use the system API
+import * as StoreReview from 'expo-store-review'; // or react-native-store-review
+
+if (await StoreReview.hasAction()) {
+  await StoreReview.requestReview();
+}
+```
+
+### 5.6.2 Developer Identity
+
+- [ ] Representation of yourself, your business, and offerings must be accurate
+- [ ] All information provided (to Apple and users) must be truthful, relevant, and up-to-date
+
+### 5.6.3 Discovery Fraud
+
+- [ ] Do NOT manipulate any element of the App Store customer experience: charts, search, reviews, or referrals to your app
+
+### 5.6.4 App Quality
+
+- [ ] Maintain high quality — excessive negative reviews and excessive refund requests are signals Apple monitors
+- [ ] Sustained inability to maintain quality can factor into Code of Conduct compliance decisions
 
 ---
 
