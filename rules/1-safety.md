@@ -5,7 +5,7 @@ description: App Store Review Guidelines Section 1 - Safety (objectionable conte
 
 # 1. SAFETY
 
-Apps should not include content that is offensive, insensitive, upsetting, intended to disgust, in exceptionally poor taste, or just plain creepy.
+When people install an app from the App Store, they want to feel confident that it's safe to do so. Apps looking to shock and offend people don't belong on the App Store.
 
 ## Current Apple Emphasis
 
@@ -16,12 +16,15 @@ Apple's June 8, 2026 update revised kid and teen safety guidance. When reviewing
 
 ## 1.1 Objectionable Content
 
+Apps should not include content that is offensive, insensitive, upsetting, intended to disgust, in exceptionally poor taste, or just plain creepy.
+
 ### 1.1.1 Defamatory, Discriminatory, or Mean-Spirited Content
 
 **REJECT if app contains:**
-- [ ] Content including references or commentary about religion, race, sexual orientation, gender, national/ethnic origin, or other targeted groups
-- [ ] Content likely to humiliate, intimidate, or harm a targeted individual or group
+- [ ] Defamatory, discriminatory, or mean-spirited content — including references or commentary about religion, race, sexual orientation, gender, national/ethnic origin, or other targeted groups — particularly if the app is likely to humiliate, intimidate, or harm a targeted individual or group
 - [ ] Discriminatory language in any text, assets, or user-facing content
+
+**Note:** Merely mentioning religion, race, etc. is NOT a violation — the content must be defamatory, discriminatory, or mean-spirited.
 
 **Exception:** Professional political satirists and humorists are generally exempt.
 
@@ -51,7 +54,7 @@ const strings = {
 **REJECT if app contains:**
 - [ ] Realistic portrayals of people or animals being killed, maimed, tortured, or abused
 - [ ] Content that encourages violence
-- [ ] "Enemies" that solely target a specific race, culture, real government, corporation, or any other real entity
+- [ ] "Enemies" within the context of a game that solely target a specific race, culture, real government, corporation, or any other real entity
 
 **Code patterns to flag:**
 
@@ -167,7 +170,8 @@ const sendPrankSMS = () => { }; // REJECTION
 **REJECT if app:**
 - [ ] Capitalizes or seeks to profit on violent conflicts
 - [ ] Exploits terrorist attacks
-- [ ] Exploits epidemics or health crises
+- [ ] Exploits epidemics
+- [ ] Contains other harmful concepts capitalizing on recent or current events
 
 ---
 
@@ -262,15 +266,12 @@ Apps primarily used for the following will be removed WITHOUT notice:
 If your app includes user-generated content from a web-based service:
 - [ ] Mature content MUST be hidden by default
 - [ ] Only displayed when user explicitly enables it via your website
-- [ ] Violating content must be removable quickly when detected or reported
-- [ ] App Review may require a concrete compliance improvement plan before the app can stay on the App Store
-- [ ] Egregious or repeated UGC failures can trigger immediate app removal and Developer Program removal
 
 ```typescript
 // React Native - REQUIRED: NSFW content hidden by default
 const [showMatureContent, setShowMatureContent] = useState(false);
 
-// Must be enabled via website, not in-app toggle for Kids safety
+// Must be enabled via the developer's website, not an in-app toggle
 // Check user preference from backend (set via website)
 useEffect(() => {
   const checkMatureContentSetting = async () => {
@@ -284,6 +285,10 @@ useEffect(() => {
 ### Developer Responsibility for Violating UGC
 
 Apple's current 1.2 language makes the developer responsible for removing content that violates the guideline, the app's terms of service, or community standards. If Apple finds violating content, expect to remove it and explain how compliance will improve.
+
+- [ ] Violating content must be removable quickly when detected or reported
+- [ ] App Review may require a concrete compliance improvement plan before the app can stay on the App Store
+- [ ] Egregious or repeated UGC failures can trigger immediate app removal and Developer Program removal
 
 **Review for:**
 - [ ] Admin/moderator tooling that can remove posts, comments, profiles, messages, media, and creator content
@@ -311,6 +316,8 @@ const removeViolatingContent = async (action: ModerationAction): Promise<void> =
 
 ### 1.2.1 Creator Content
 
+Creator experiences are not native "apps" coded by developers — they are content within the app itself and are treated as user-generated content by App Review.
+
 Apps featuring content from "creators" must:
 - [ ] Properly moderate content per Guideline 1.2
 - [ ] Follow payment guidelines per 3.1.1
@@ -334,7 +341,7 @@ If participating in Kids Category, you MUST follow these rules:
 - [ ] No links out of app unless behind parental gate
 - [ ] No purchasing opportunities unless behind parental gate
 - [ ] No other distractions to kids unless behind parental gate
-- [ ] Must continue meeting Kids Category requirements in all future updates
+- [ ] Must continue meeting Kids Category requirements in all future updates — EVEN if you later deselect the category (once customers expect it, it sticks)
 
 **Swift parental gate:**
 ```swift
@@ -342,8 +349,9 @@ If participating in Kids Category, you MUST follow these rules:
 class ParentalGate {
     // Must require adult verification - examples:
     // - Math problem (e.g., "What is 15 + 27?")
-    // - Date of birth entry
     // - Written instructions to have parent complete
+    // NOTE: simple date-of-birth/age entry is trivially bypassable
+    // and is a known rejection pattern — don't use it as the gate
 
     func presentGate(completion: @escaping (Bool) -> Void) {
         // Implementation must be non-trivial for children
@@ -359,11 +367,11 @@ func openExternalLink(_ url: URL) {
     }
 }
 
-// REQUIRED: Gate before purchases
-func initiatePurchase(_ product: SKProduct) {
+// REQUIRED: Gate before purchases (StoreKit 2)
+func initiatePurchase(_ product: Product) {
     parentalGate.presentGate { verified in
         if verified {
-            // Proceed with purchase
+            Task { try await product.purchase() }
         }
     }
 }
@@ -455,7 +463,7 @@ Third-party analytics MAY be permitted if services:
 - [ ] Do NOT collect or transmit IDFA
 - [ ] Do NOT collect identifiable information (name, DOB, email)
 - [ ] Do NOT use location
-- [ ] Do NOT use device information that could identify users
+- [ ] Do NOT collect any device, network, or other information that could be used directly — or combined with other information — to identify users and their devices
 
 Third-party contextual advertising MAY be permitted if services:
 - [ ] Have publicly documented practices for Kids Category apps
@@ -531,6 +539,8 @@ Drug dosage calculators MUST come from:
 - [ ] Another approved entity, OR
 - [ ] Have FDA approval (or international equivalent)
 
+Given the potential harm to patients, Apple needs to be sure the app will be supported and updated over the long term.
+
 ### 1.4.3 Substance Consumption
 
 **NOT permitted:**
@@ -539,7 +549,8 @@ Drug dosage calculators MUST come from:
 - [ ] Apps encouraging illegal drug use
 - [ ] Apps encouraging excessive alcohol consumption
 - [ ] Apps encouraging minors to consume any of these substances
-- [ ] Facilitating sale of controlled substances (except licensed pharmacies/dispensaries)
+- [ ] Facilitating sale of controlled substances (except licensed pharmacies and licensed or otherwise legal cannabis dispensaries)
+- [ ] Facilitating sale of tobacco
 
 **Code patterns to flag:**
 
@@ -589,7 +600,7 @@ const purchaseControlledSubstance = async () => { }; // REJECTION unless license
 
 ## 1.6 Data Security
 
-- [ ] Implement appropriate security measures for user information handling
+- [ ] Implement appropriate security measures for handling user information collected pursuant to the Developer Program License Agreement and these Guidelines (see Guideline 5.1 / rules/5-legal.md)
 - [ ] Prevent unauthorized use, disclosure, or access by third parties
 
 **Swift implementation:**
@@ -648,11 +659,8 @@ const API_KEY = 'sk_live_xxxxx'; // NEVER DO THIS
 const PASSWORD = 'admin123';     // NEVER DO THIS
 
 // ❌ BAD: Secrets in JavaScript bundle
-// .env files get bundled into JS - use native modules for secrets
-
-// ✅ GOOD: Use react-native-config with native-side secrets
-import Config from 'react-native-config';
-const apiKey = Config.API_KEY; // Set in native build, not JS
+// .env files get bundled into JS — and react-native-config also embeds
+// values into the app where they are extractable; it is NOT a secret store
 
 // ✅ GOOD: Fetch secrets from secure backend
 const getApiKey = async () => {
@@ -675,7 +683,7 @@ import { fetch } from 'react-native-ssl-pinning';
 
 ## 1.7 Reporting Criminal Activity
 
-- [ ] Apps for reporting criminal activity MUST involve local law enforcement
+- [ ] Apps for reporting alleged criminal activity MUST involve local law enforcement
 - [ ] Can ONLY be offered in countries/regions where such involvement is active
 
 ---
@@ -690,4 +698,4 @@ import { fetch } from 'react-native-ssl-pinning';
 | Secure Storage | `expo-secure-store` | `react-native-keychain` |
 | SSL Pinning | - | `react-native-ssl-pinning` |
 | Linking | `expo-linking` | `react-native` Linking |
-| IAP (with parental gate) | `expo-in-app-purchases` | `react-native-iap` |
+| IAP (with parental gate) | `react-native-purchases` (RevenueCat, dev build) | `react-native-purchases` (RevenueCat) or `react-native-iap` |

@@ -5,6 +5,10 @@ description: App Store Review Guidelines Section 4 - Design (copycats, minimum f
 
 # 4. DESIGN
 
+**Section intro (enforcement-relevant):**
+- [ ] These are minimum standards for approval — even after approval, keep the app functional and engaging
+- [ ] Apps that stop working or offer a degraded experience may be REMOVED from the App Store at any time
+
 ## 4.1 Copycats
 
 ### 4.1(a) Original Ideas
@@ -24,6 +28,10 @@ description: App Store Review Guidelines Section 4 - Design (copycats, minimum f
 ## 4.2 Minimum Functionality
 
 Apps should include features, content, and UI elevating it beyond a repackaged website.
+
+- [ ] App must be useful, unique, or "app-like" — otherwise it doesn't belong on the App Store
+- [ ] Must provide lasting entertainment value or adequate utility
+- [ ] Apps that are simply a song or movie belong on the iTunes Store; simply a book or game guide belongs on Apple Books
 
 **React Native - WebView-only apps will be REJECTED:**
 ```typescript
@@ -72,7 +80,7 @@ const App = () => {
 - [ ] Merely dropping model into AR view is NOT enough
 
 ### 4.2.2 Marketing Content Restrictions
-- [ ] Apps shouldn't primarily be marketing materials
+- [ ] Other than catalogs, apps shouldn't primarily be marketing materials
 - [ ] Not advertisements, web clippings, content aggregators, or link collections
 
 ### 4.2.3 App Independence and Resource Downloads
@@ -83,6 +91,8 @@ const App = () => {
 #### 4.2.3(ii) Download Disclosure
 - [ ] If additional resources needed for initial launch, disclose download size
 - [ ] Prompt users before downloading
+
+### 4.2.4 / 4.2.5 Intentionally omitted
 
 ### 4.2.6 Template and App Generation Services
 - [ ] Template apps must be submitted by content provider, not service
@@ -110,6 +120,7 @@ If mirroring specific software/services (not generic host device):
 - [ ] UI must NOT resemble iOS or App Store
 - [ ] No store-like interface
 - [ ] No ability to browse/select/purchase software not already owned
+- [ ] Clarification: transactions inside mirrored software do NOT need IAP, provided they are processed on the host device
 
 #### 4.2.7(e) Cloud-Based Limitations
 - [ ] Thin clients for cloud-based apps NOT appropriate
@@ -144,7 +155,7 @@ const ENABLED_TEAM = 'team_red'; // Review if separate Bundle IDs exist per team
 
 ## 4.4 Extensions
 
-- [ ] Comply with App Extension Programming Guide
+- [ ] Comply with App Extension Programming Guide, Safari app extensions documentation, or Safari web extensions documentation
 - [ ] Include functionality (help screens, settings)
 - [ ] Clearly disclose extensions in marketing text
 - [ ] Extensions may NOT include marketing, advertising, or IAP
@@ -155,7 +166,7 @@ const ENABLED_TEAM = 'team_red'; // Review if separate Bundle IDs exist per team
 - [ ] Provide keyboard input functionality
 - [ ] Follow Sticker guidelines for images/emoji
 - [ ] Provide method to progress to next keyboard
-- [ ] Remain functional without full network access
+- [ ] Remain functional without full network access AND without requiring Full Access
 - [ ] Only collect user activity to enhance keyboard functionality
 
 **Must NOT:**
@@ -165,8 +176,10 @@ const ENABLED_TEAM = 'team_red'; // Review if separate Bundle IDs exist per team
 ### 4.4.2 Safari Extensions
 - [ ] Must run on current Safari version
 - [ ] May not interfere with System or Safari UI
-- [ ] Must never include malicious or misleading content/code
+- [ ] Must never include malicious or misleading content/code — violating this leads to removal from the Developer Program
 - [ ] Should not claim access to more websites than necessary
+
+### 4.4.3 Intentionally omitted
 
 ---
 
@@ -200,7 +213,8 @@ const ENABLED_TEAM = 'team_red'; // Review if separate Bundle IDs exist per team
 - [ ] Do NOT spam via Game Center, Push Notifications, Live Activities, or other Apple services
 - [ ] Do NOT phish customers through Apple services
 - [ ] Do NOT send unsolicited messages through Apple services
-- [ ] Do NOT exploit Player IDs, aliases, or other information
+- [ ] Do NOT exploit Player IDs, aliases, or other information obtained through Game Center
+- [ ] Violations result in removal from the Apple Developer Program
 
 **Live Activities review points:**
 - [ ] Live Activities are tied to a user-initiated, time-bound activity
@@ -222,6 +236,7 @@ try await activity.update(ActivityContent(
 - [ ] NOT for promotions/marketing UNLESS opt-in
 - [ ] Opt-in must be via consent language in app UI
 - [ ] Must provide opt-out method
+- [ ] Abuse of these services may result in revocation of privileges
 
 ### 4.5.5 Game Center Player IDs
 - [ ] Only use as approved by Game Center terms
@@ -234,7 +249,17 @@ try await activity.update(ActivityContent(
 
 ---
 
+## 4.6 Intentionally omitted
+
+---
+
 ## 4.7 Mini Apps, Mini Games, Streaming Games, Chatbots, Plug-ins, Game Emulators
+
+**Scope and responsibility:**
+- [ ] Applies to software NOT embedded in the binary: HTML5/JavaScript mini apps and mini games, streaming games, chatbots, and plug-ins
+- [ ] Retro game console and PC emulator apps may offer game downloads
+- [ ] Developer is responsible for ALL such software offered in the app — it must comply with these Guidelines and all applicable laws
+- [ ] Hosted software violating any guideline leads to rejection of the app
 
 ### 4.7.1 Software Requirements
 - [ ] Follow all privacy guidelines (5.1)
@@ -263,10 +288,14 @@ try await activity.update(ActivityContent(
 
 ## 4.8 Login Services
 
-If using third-party/social login (Facebook, Google, Twitter, LinkedIn, Amazon, WeChat), must ALSO offer alternative login with:
+If using a third-party or social login service (e.g. Facebook Login, Google Sign-In, Log in with X, Sign In with LinkedIn, Login with Amazon, WeChat Login) to set up or authenticate the user's **primary account**, must ALSO offer as an equivalent option another login service with ALL of:
 - [ ] Only collects name and email
 - [ ] Allows keeping email private
-- [ ] Does NOT collect interactions for advertising without consent
+- [ ] Does NOT collect interactions with the app for advertising without consent
+
+Sign in with Apple meets all three criteria and is the simplest way to comply, but any login service meeting them is acceptable.
+
+**Primary account** = the account the user establishes with your app to identify themselves, sign in, and access features and services. Secondary or linked logins are out of scope.
 
 **Exceptions (alternative NOT required if):**
 - [ ] Exclusively using company's own account system
@@ -295,12 +324,14 @@ class LoginViewController {
 
 **React Native implementation:**
 ```typescript
-// REQUIRED: If using social login, must offer Sign in with Apple
+// REQUIRED: If social login sets up the primary account, also offer an
+// equivalent privacy-preserving login. Sign in with Apple is the simplest
+// compliant option (not the only one).
 import { appleAuth } from '@invertase/react-native-apple-authentication';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 const LoginScreen = () => {
-  // ✅ REQUIRED: Sign in with Apple (if any social login is offered)
+  // ✅ Sign in with Apple — meets all three 4.8 criteria
   const signInWithApple = async () => {
     const credential = await appleAuth.performRequest({
       requestedOperation: appleAuth.Operation.LOGIN,
@@ -325,7 +356,8 @@ const LoginScreen = () => {
 
   return (
     <View>
-      {/* If you have Google login, you MUST have Apple login */}
+      {/* Google login alone isn't compliant — pair it with a login
+          meeting 4.8's criteria (e.g. Sign in with Apple) */}
       <AppleButton onPress={signInWithApple} />
       <GoogleSigninButton onPress={signInWithGoogle} />
       <Button title="Continue with Email" onPress={showEmailForm} />
@@ -343,7 +375,7 @@ const LoginScreen = () => {
 ## 4.9 Apple Pay
 
 - [ ] Provide all material purchase information PRIOR to sale
-- [ ] Use Apple Pay branding and UI correctly
+- [ ] Use Apple Pay branding and UI as described in the Apple Pay Marketing Guidelines and Human Interface Guidelines
 
 **Recurring payments must disclose:**
 - [ ] Length of renewal term and auto-continuation
@@ -380,7 +412,7 @@ const LoginScreen = () => {
 
 ## React Native Design Checklist
 
-- [ ] If using social login (Google, Facebook, etc.), MUST include Sign in with Apple
+- [ ] If using social login (Google, Facebook, etc.) for the primary account, also offer a login meeting 4.8's privacy criteria (Sign in with Apple is the simplest compliant option)
 - [ ] App has meaningful native functionality beyond WebView
 - [ ] No App Store-like interfaces for third-party content
 - [ ] Extensions/widgets don't contain ads or IAP

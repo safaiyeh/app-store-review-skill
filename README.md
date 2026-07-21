@@ -75,6 +75,9 @@ SKILLS_NO_TELEMETRY=1 npx skills add safaiyeh/app-store-review-skill
 app-store-review-skill/
 ├── .agents/
 │   └── plugins/marketplace.json # Codex plugin marketplace
+├── .claude-plugin/
+│   ├── marketplace.json        # Claude Code plugin marketplace
+│   └── plugin.json             # Claude Code plugin manifest
 ├── .codex-plugin/
 │   └── plugin.json              # Codex plugin manifest
 ├── agents/
@@ -130,6 +133,7 @@ This skill covers **ALL 5 major sections** with **EVERY guideline point**:
 - 5.3 Gaming, Gambling, Lotteries
 - 5.4 VPN Apps
 - 5.5 Mobile Device Management
+- 5.6 Developer Code of Conduct (reviews, developer identity, discovery fraud, app quality)
 
 ## Features
 
@@ -150,8 +154,8 @@ Each rule file includes:
 - React Native-specific checklists
 
 Key packages covered:
+- `react-native-purchases` (RevenueCat — recommended for IAP) / `react-native-iap`
 - `expo-tracking-transparency` / `react-native-tracking-transparency`
-- `expo-in-app-purchases` / `react-native-iap`
 - `expo-secure-store` / `react-native-keychain`
 - `expo-apple-authentication` / `@invertase/react-native-apple-authentication`
 - `expo-local-authentication` / `react-native-biometrics`
@@ -179,6 +183,7 @@ Key packages covered:
 - Over-requesting permissions
 - Unjustified background modes
 - References to other platforms
+- Custom review prompts instead of the system API
 
 ## When It Triggers
 
