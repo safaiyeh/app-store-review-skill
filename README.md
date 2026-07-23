@@ -1,5 +1,7 @@
 # App Store Review Guidelines Skill
 
+[English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
+
 An AI agent skill that exhaustively evaluates iOS, macOS, tvOS, watchOS, and visionOS app code against **every point** in Apple's App Store Review Guidelines.
 
 **Supports:** Swift, Objective-C, **React Native**, and **Expo** apps
