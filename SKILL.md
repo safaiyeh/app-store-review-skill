@@ -4,7 +4,7 @@ description: Evaluates code against Apple's App Store Review Guidelines. Use thi
 license: MIT
 metadata:
   author: safaiyeh
-  version: "1.1.0"
+  version: "1.1.1"
 ---
 
 # App Store Review Guidelines Checker
@@ -160,6 +160,7 @@ console.log('debug'); // Remove or wrap in __DEV__
 
 ### Performance (Section 2.x)
 - [ ] No crashes or bugs
+- [ ] Tested on both iPhone and iPad — App Review currently reviews on iPad Air 11-inch (M3) and iPhone 17 Pro Max (as of August 2026)
 - [ ] All features complete and functional
 - [ ] No placeholder content
 - [ ] IPv6 tested and functional
