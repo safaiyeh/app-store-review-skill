@@ -18,6 +18,8 @@ description: App Store Review Guidelines Section 2 - Performance (app completene
 - [ ] Tested on-device for bugs and stability
 - [ ] Incomplete app bundles and binaries that crash or exhibit obvious technical problems will be REJECTED
 
+**Known App Review devices (as of August 2026):** rejection notices list the review device as **iPad Air 11-inch (M3)** and **iPhone 17 Pro Max**. Reviewers now test on iPhone as well as iPad — an app that only works well on one form factor can be rejected even if the other is your primary target. Test on both (or equivalent simulators) before submitting.
+
 **Swift code patterns to flag:**
 ```swift
 // FLAG: Placeholder content
@@ -326,6 +328,7 @@ import googlePlayBadge from './assets/google-play-badge.png'; // Remove from iOS
 
 - [ ] iPhone apps should run on iPad whenever possible
 - [ ] Encouraged to build apps for all devices
+- [ ] Expect review on both form factors: App Review currently uses iPad Air 11-inch (M3) and iPhone 17 Pro Max (as of August 2026), so iPhone-only apps are still exercised on iPad in compatibility mode and iPad-focused apps are checked on iPhone
 
 ```swift
 // Swift - REQUIRED: Check device support
@@ -850,6 +853,7 @@ const authenticate = async () => {
 - [ ] Remove all `console.log` statements (or wrap in `__DEV__`)
 - [ ] Remove placeholder content from all screens
 - [ ] Test on real iOS device (not just simulator)
+- [ ] Test on both iPhone and iPad — App Review uses iPad Air 11-inch (M3) and iPhone 17 Pro Max (as of August 2026)
 - [ ] Test IAP flow end-to-end including restore
 - [ ] Verify no hardcoded IP addresses
 - [ ] Check all background modes are legitimately used
