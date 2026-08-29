@@ -178,6 +178,10 @@ const handleLootBoxPurchase = () => {
 - [ ] Entitlements allow a link to a website the developer owns or maintains responsibility for, to purchase digital content or services
 - [ ] US storefront: NO entitlement required — apps may include buttons, external links, or other calls to action freely
 
+**Regional notes (verify current terms before relying on these):**
+- [ ] Brazil: following Apple's agreement with CADE (June 2026, iOS 26.5+), apps in Brazil may process payments for digital goods/services outside IAP and may be distributed via alternative app marketplaces; notarization and child safety requirements still apply
+- [ ] EU: under updated terms effective October 1, 2026, apps on the EU App Store may offer alternative payment options alongside Apple IAP (with added child safety protections); the Core Technology Fee is replaced by a 5% Core Technology Commission on digital transactions in alternatively distributed apps
+
 **StoreKit External Purchase Link Entitlements:**
 - [ ] Available in specific regions only (iOS/iPadOS App Store)
 - [ ] May include link to developer website informing users of other ways to purchase digital goods or services

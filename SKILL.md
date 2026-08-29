@@ -4,7 +4,7 @@ description: Evaluates code against Apple's App Store Review Guidelines. Use thi
 license: MIT
 metadata:
   author: safaiyeh
-  version: "1.1.1"
+  version: "1.2.0"
 ---
 
 # App Store Review Guidelines Checker
@@ -13,7 +13,7 @@ Comprehensive guide for evaluating iOS, macOS, tvOS, watchOS, and visionOS app c
 
 **Supports:** Swift, Objective-C, React Native, and Expo apps
 
-**Guidelines current through:** Apple's June 8, 2026 App Review Guidelines update.
+**Guidelines current through:** Apple's June 8, 2026 App Review Guidelines update (verified still current as of August 29, 2026). Also incorporates post-June policy announcements: social media age-rating questions (mandatory September 2026), Republic of Korea age rating changes (August/October 2026), and Brazil/EU alternative payment and distribution terms.
 
 ## When to Apply
 
@@ -159,6 +159,7 @@ console.log('debug'); // Remove or wrap in __DEV__
 - [ ] No substance promotion
 
 ### Performance (Section 2.x)
+- [ ] Age rating questionnaire's social media capability questions answered (mandatory for submissions starting September 2026; apps with a social feed get a "Social Media" descriptor and Time Allowances category)
 - [ ] No crashes or bugs
 - [ ] Tested on both iPhone and iPad — App Review currently reviews on iPad Air 11-inch (M3) and iPhone 17 Pro Max (as of August 2026)
 - [ ] All features complete and functional
@@ -195,6 +196,10 @@ console.log('debug'); // Remove or wrap in __DEV__
 - [App Store Review Guidelines](https://developer.apple.com/app-store/review/guidelines/)
 - [Apple Developer Program License Agreement](https://developer.apple.com/support/terms/apple-developer-program-license-agreement/)
 - [June 8, 2026 App Review Guidelines update](https://developer.apple.com/news/?id=a233fmpw)
+- [Age rating questionnaire: social media questions (July 2026)](https://developer.apple.com/news/?id=tlur8uvi)
+- [Age rating updates for the Republic of Korea (August 2026)](https://developer.apple.com/news/?id=oj3r9pvw)
+- [Changes for apps in the European Union (August 2026)](https://developer.apple.com/news/?id=gmws0jgp)
+- [Changes to iOS in Brazil (June 2026)](https://developer.apple.com/news/?id=dhwadr2x)
 - [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/)
 - [App Store Connect Help](https://developer.apple.com/help/app-store-connect/)
 - [Apple Developer Documentation](https://developer.apple.com/documentation/)
