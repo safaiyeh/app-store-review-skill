@@ -1,0 +1,60 @@
+name: Skill feedback
+description: Report wrong, outdated, or missing guidance in the app-store-review skill
+title: "[Feedback] "
+labels: ["feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve the skill. Please don't include proprietary code,
+        app names, or anything confidential — the report is about the skill's rules,
+        not your app.
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feedback category
+      options:
+        - False positive — flagged compliant code
+        - False negative — missed an issue Apple flagged
+        - Wrong citation — wrong guideline section or risk level
+        - Outdated — contradicts Apple's current guidelines
+        - Too noisy — too many low-value findings
+        - Not actionable — lacked detail or a concrete fix
+        - Bad fix — suggested remediation was wrong (incl. Swift/RN/Expo specifics)
+        - Missing rule — scenario or storefront the skill doesn't cover
+        - Contradiction — the skill disagrees with itself
+        - Trigger/weight — activates wrongly or uses too much context
+        - Unclear — confusing or hard to apply
+        - Other / suggestion
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Skill version
+      description: From SKILL.md frontmatter or `/plugin` listing
+      placeholder: "1.3.0"
+    validations:
+      required: false
+  - type: input
+    id: section
+    attributes:
+      label: Guideline section / rule
+      description: Which rule or section was involved
+      placeholder: "e.g. 3.1.1 In-App Purchase"
+    validations:
+      required: false
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What the skill said or did, and what should have happened instead
+      description: What guidance did the skill give (or fail to give)? Was it wrong, noisy, vague, or missing? What would the right behavior have been?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: App Review outcome (optional)
+      description: If your app went through review, what did Apple say? Share only what you're comfortable making public.
+    validations:
+      required: false

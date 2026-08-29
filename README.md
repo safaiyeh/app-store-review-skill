@@ -69,6 +69,14 @@ The skills CLI collects anonymous usage telemetry. To opt out:
 SKILLS_NO_TELEMETRY=1 npx skills add safaiyeh/app-store-review-skill
 ```
 
+**This skill itself collects no telemetry** and makes no network calls of its own.
+
+### Feedback
+
+All feedback is welcome, big or small: false positives, findings the skill missed, guidance that was too aggressive, too noisy, too vague, or outdated, wrong section citations, bad suggested fixes, missing coverage, or the skill triggering when it shouldn't. If anything felt off — especially if your app was rejected despite following the skill — please [file a feedback issue](https://github.com/safaiyeh/app-store-review-skill/issues/new?template=skill-feedback.yml).
+
+The skill also instructs your AI agent to *offer* to draft such an issue when it notices the skill failed you. This is strictly consent-based: the agent must ask first, show you the exact issue text, and only submit with your approval (via `gh`, which you can also deny at the permission prompt). It never sends anything automatically, and drafts never include your code or app details.
+
 ## Structure
 
 ```
