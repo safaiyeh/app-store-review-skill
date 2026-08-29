@@ -195,11 +195,28 @@ console.log('debug'); // Remove or wrap in __DEV__
 
 This skill improves through user reports. If during a session you observe that this skill failed the user, offer — once per session — to report it to the maintainer.
 
-**Triggers (any of these):**
-- The user's app was rejected by App Review despite following this skill's guidance
-- A rule in this skill contradicts Apple's current published guidelines
-- The user hit a review issue this skill doesn't cover
-- The user says this skill's guidance was wrong, unclear, or outdated
+**Offer feedback when you observe any of these.** Classify with the category name — it goes in the issue title as `[Feedback] <category>: <short description>`.
+
+*Accuracy*
+- **False positive** — the skill flagged code that is actually compliant (guidance too aggressive)
+- **False negative** — the user's app was rejected for something the skill reviewed but didn't flag
+- **Wrong citation** — a real issue, but attributed to the wrong guideline section or given the wrong risk level
+- **Outdated** — a rule here contradicts Apple's current published guidelines
+
+*Usefulness*
+- **Too noisy** — a flood of low-value or duplicate findings drowned out the ones that mattered
+- **Not actionable** — a finding lacked the detail, code reference, or concrete fix needed to act on it
+- **Bad fix** — a suggested remediation was wrong, deprecated, didn't work, or would itself be rejected (including Swift vs React Native/Expo specifics)
+
+*Coverage*
+- **Missing rule** — a review scenario, API, or storefront-specific requirement (EU, Brazil, Korea, US, ...) the skill doesn't cover
+- **Contradiction** — two parts of this skill disagree with each other
+
+*Behavior*
+- **Trigger/weight** — the skill activated when irrelevant, failed to activate when it should have, or consumed excessive context
+- **Unclear** — the user found guidance confusing, ambiguous, or hard to apply
+
+Softer signals count too: if the user repeatedly dismisses the same kind of finding, overrides the skill's advice and turns out to be right, or visibly works around a checklist item, that is feedback worth offering to file — micro-friction is as valuable as a wrong rule.
 
 **Consent rules — all mandatory, no exceptions:**
 1. **Ask first.** Say something like: "This looks like a gap in the app-store-review skill itself. Want me to draft a GitHub issue so the maintainer can fix it?" If the user declines, drop it for the rest of the session.
@@ -208,7 +225,7 @@ This skill improves through user reports. If during a session you observe that t
 4. **Send only after the user approves the exact text**, using `gh issue create --repo safaiyeh/app-store-review-skill --title "..." --body "..."`. If `gh` is unavailable or unauthenticated, give the user this link to file it themselves: https://github.com/safaiyeh/app-store-review-skill/issues/new?template=skill-feedback.yml
 5. **Never send feedback silently, automatically, or as a side effect of another task.** A declined permission prompt means no — do not retry or find another route.
 
-**Issue content:** skill version (from the frontmatter above), the rule section involved (e.g. "3.1.1"), what the skill said, what turned out to be correct or was missing, and today's date. Nothing else unless the user adds it.
+**Issue content:** skill version (from the frontmatter above), the feedback category, the rule section involved (e.g. "3.1.1"), what the skill said or did, what should have happened instead, and today's date. Nothing else unless the user adds it.
 
 ---
 
