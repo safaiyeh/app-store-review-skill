@@ -1,6 +1,9 @@
 # Claude Code
 .claude/
 
+# Local research runs
+.beagle/
+
 # Dependencies
 node_modules/
 
