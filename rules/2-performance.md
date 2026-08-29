@@ -230,6 +230,16 @@ const restorePurchases = async () => {
 - [ ] Mis-rating may trigger government regulator inquiry
 - [ ] Responsible for complying with local content rating requirements
 
+**Social media capability questions (mandatory starting September 2026):**
+- [ ] Answer the questionnaire's social media capability questions — required for new submissions, app updates, and notarization submissions starting September 2026
+- [ ] "Social media capability" = the ability to redistribute, amplify, or interact with user-generated content through a social feed or similar discovery method
+- [ ] Apps with social media capabilities are placed in the "Social Media" Time Allowances category and show a "Social Media" content descriptor on their product page — based on actual capabilities, not the selected App Store category
+- [ ] If social media capabilities are disabled for users under 13, the app is excluded from the Social Media Time Allowance category for that age group
+
+**Republic of Korea (August 2026 changes):**
+- [ ] Games/Entertainment apps with an official GRAC rating may override the Korean App Store age rating by providing the GRAC Rating Classification Number (RCN) at submission (All / 12+ / 15+ / 19+)
+- [ ] From October 2026, "infrequent profanity and crude humor" and "infrequent mature or suggestive themes" descriptors move from "All" to 12+ in Korea — expect an automatic rating bump if either applies
+
 ### 2.3.7 App Name, Keywords, and Metadata Integrity
 
 **Requirements:**
