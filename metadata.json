@@ -1,7 +1,7 @@
 {
-  "version": "1.3.0",
+  "version": "1.3.1",
   "organization": "safaiyeh",
-  "date": "August 2026",
+  "date": "September 2026",
   "abstract": "Exhaustive guide for evaluating iOS, macOS, tvOS, watchOS, and visionOS app code against Apple's App Store Review Guidelines, current through Apple's June 8, 2026 update. Covers ALL 5 major sections with EVERY guideline point: Section 1 Safety (1.1-1.7 including objectionable content, UGC, Kids Category, physical harm, developer info, data security), Section 2 Performance (2.1-2.5 including completeness, beta testing, metadata, hardware compatibility, software requirements), Section 3 Business (3.1-3.2 including IAP, subscriptions, cryptocurrencies, other business models), Section 4 Design (4.1-4.10 including copycats, minimum functionality, spam, extensions, Apple services, mini apps, login services, Apple Pay), and Section 5 Legal (5.1-5.6 including privacy, IP, gambling, VPN, MDM, developer code of conduct). Includes code patterns to flag, checklists for each guideline, and pre-submission verification.",
   "references": [
     "https://developer.apple.com/app-store/review/guidelines/",
