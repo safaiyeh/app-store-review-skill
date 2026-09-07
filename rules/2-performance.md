@@ -115,6 +115,8 @@ All metadata — including privacy information, app description, screenshots, an
 - iOS virus/malware scanners (not actually possible)
 - Promoting false prices
 
+For tvOS controller requirements, use [2.4.3](#243-apple-tv-hardware-input-requirements). Do not infer hidden functionality or misleading marketing from `GCSupportsControllerUserInteraction = false` alone.
+
 #### 2.3.1(b) Egregious Behavior
 
 Egregious or repeated behavior results in removal from Apple Developer Program.
@@ -431,9 +433,28 @@ for (let i = 0; i < 1000000; i++) {
 
 ### 2.4.3 Apple TV Hardware Input Requirements
 
-- [ ] App must be usable without hardware beyond Siri remote or game controllers
+- [ ] App must be usable without hardware beyond the Siri Remote or game controllers; requiring a game controller is allowed
 - [ ] May provide enhanced functionality with other peripherals
-- [ ] If requiring game controller, clearly explain in metadata
+- [ ] If requiring a game controller, clearly explain the requirement in App Store metadata so customers know they need additional equipment
+
+**tvOS controller declarations:**
+
+Do not flag `GCSupportsControllerUserInteraction = false` alone as "the wrong controller key," lack of game controller support, or a violation of 2.4.3 or 2.3.1. [Issue #14](https://github.com/safaiyeh/app-store-review-skill/issues/14) reports this as a valid tvOS controller-required declaration: the Boolean describes Siri Remote support, and `false` produces the Controller Required badge. Apple's current [key reference](https://developer.apple.com/documentation/bundleresources/information-property-list/gcsupportscontrolleruserinteraction) does not explicitly document this tvOS behavior. Preserve the reported configuration when it matches the game's input requirements; verify the target's behavior and App Store declaration before recommending a change.
+
+Check App Store metadata separately. If it omits or contradicts the controller requirement, flag the disclosure under [2.4.3](https://developer.apple.com/app-store/review/guidelines/#hardware-compatibility) and recommend correcting the metadata. If metadata is unavailable, mark disclosure as needing verification rather than assuming it is missing.
+
+**Do not substitute the iOS / visionOS key:**
+
+[`GCRequiresControllerUserInteraction`](https://developer.apple.com/documentation/bundleresources/information-property-list/gcrequirescontrolleruserinteraction) is a **dictionary**, with only the documented platform keys below. Do not recommend it for tvOS or add a `tvOS` entry.
+
+| Dictionary entry | Value type | Meaning when `true` |
+|------------------|------------|---------------------|
+| `iOS` | Boolean | Controller Recommended badge on iOS |
+| `visionOS` | Boolean | Controller Required badge on visionOS |
+
+For native visionOS apps, use only the `visionOS` entry. An iOS app may include `iOS` and/or `visionOS` for its iOS experience and its compatible iPhone/iPad experience on visionOS. Using this dictionary also requires the Game Controllers capability and ExtendedGamepad support.
+
+Flag `GCRequiresControllerUserInteraction = true` as an invalid top-level Boolean; this caused the upload type-mismatch failure in issue #14. For iOS/visionOS, use the appropriate Boolean entry inside a dictionary. For tvOS, remove the unsupported key and review the tvOS configuration above.
 
 ### 2.4.4 Device Restart and System Settings
 
