@@ -1,0 +1,10 @@
+{
+  "profile": "fixture-team",
+  "appId": "1000000001",
+  "bundleId": "com.example.trailnotes",
+  "platform": "IOS",
+  "version": "2.4.0",
+  "versionId": "fixture-version-id",
+  "appInfoId": "fixture-app-info-id",
+  "cliVersion": "1.5.4"
+}

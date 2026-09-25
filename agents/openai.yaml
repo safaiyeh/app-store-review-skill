@@ -1,4 +1,4 @@
 interface:
   display_name: "App Store Review"
-  short_description: "Audit App Store compliance before submission"
-  default_prompt: "Use $app-store-review to review this app for App Store compliance before submission."
+  short_description: "Review app code and App Store metadata"
+  default_prompt: "Use $app-store-review to audit this app's code or App Store metadata, report evidence and coverage, and prepare fixes for review."

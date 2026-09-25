@@ -10,8 +10,8 @@
     {
       "name": "app-store-review",
       "source": "./",
-      "description": "Evaluates code against Apple's App Store Review Guidelines for iOS, macOS, tvOS, watchOS, and visionOS apps",
-      "version": "1.3.2",
+      "description": "Reviews app code and App Store metadata, prepares fixes, and verifies authorized App Store Connect updates",
+      "version": "2.0.0",
       "author": {
         "name": "safaiyeh"
       },

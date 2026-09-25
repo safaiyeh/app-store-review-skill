@@ -3,6 +3,11 @@
 
 # Local research runs
 .beagle/
+.app-store-review/
+
+# Maintainer test artifacts
+__pycache__/
+*.py[cod]
 
 # Dependencies
 node_modules/

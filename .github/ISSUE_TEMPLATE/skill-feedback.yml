@@ -33,7 +33,7 @@ body:
     attributes:
       label: Skill version
       description: From SKILL.md frontmatter or `/plugin` listing
-      placeholder: "1.3.2"
+      placeholder: "2.0.0"
     validations:
       required: false
   - type: input
