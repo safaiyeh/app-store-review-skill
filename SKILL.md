@@ -51,6 +51,8 @@ Read individual rule files for detailed explanations, checklists, and code examp
 
 ## Quick Reference: High-Risk Rejection Patterns
 
+For ATT findings, verify the SDK's configuration and actual data use. For account deletion, verify the destination and flow. For logging, inspect the data exposed and any redaction. If that evidence is unavailable, report what needs verification instead of declaring a rejection based on an API call, SDK import, or URL alone.
+
 ### Critical Issues (Immediate Rejection)
 
 **Swift:**
@@ -86,21 +88,32 @@ eval(downloadedCode); // REJECTION
 
 **Swift:**
 ```swift
-// 🟡 Missing ATT when using ad SDKs
-import FacebookAds // Without ATTrackingManager
+// 🟡 Starting Apple-defined tracking without ATT authorization
+// Illustrative helper: links user data across companies for ad targeting
+enableCrossCompanyAdTracking() // Called before ATT authorization
 
 // 🟡 Account creation without deletion
-func createAccount() { } // But no deleteAccount()
+func createAccount() { } // But no way to initiate deletion in the app
 ```
 
 **React Native / Expo:**
 ```typescript
-// 🟡 Missing ATT (use expo-tracking-transparency)
-import analytics from '@react-native-firebase/analytics';
-analytics().logEvent('event'); // Without ATT prompt = REJECTION
+// 🟡 Starting Apple-defined tracking without ATT authorization
+// Illustrative helper: SDK links user data across companies for ad targeting
+initializeTrackingAdSDK(); // Called before ATT authorization
 
-// 🟡 Account deletion via website only
-Linking.openURL('https://example.com/delete'); // Must be in-app!
+// ✅ First-party analytics alone does not require ATT
+// Assumes no IDFA access, cross-company advertising use, or data broker sharing
+import analytics from '@react-native-firebase/analytics';
+analytics().logEvent('event');
+
+// 🟡 Delete Account button opens instructions with no deletion flow
+Linking.openURL('https://example.com/help'); // Verified instructions-only page
+// ✅ An in-app button may link directly to a page that completes deletion
+Linking.openURL('https://example.com/delete-account');
+
+// 🟡 Sensitive data exposed in production logs (1.6 / 5.1)
+console.log('Access token:', accessToken); // Remove the secret or redact it
 
 // 🟡 Social login without a privacy-preserving alternative (4.8)
 <GoogleSigninButton /> // Also offer a login meeting 4.8 criteria
@@ -121,9 +134,6 @@ const App = () => <WebView source={{ uri: 'https://site.com' }} />;
 
 // 🟠 References to Android in iOS app
 const text = "Also available on Android"; // REJECTION
-
-// 🟠 console.log in production
-console.log('debug'); // Remove or wrap in __DEV__
 ```
 
 ---
@@ -135,8 +145,8 @@ console.log('debug'); // Remove or wrap in __DEV__
 - [ ] Privacy policy link accessible within app
 - [ ] All purpose strings are specific and accurate
 - [ ] App Privacy details completed in App Store Connect
-- [ ] ATT implemented if tracking users
-- [ ] Account deletion available if accounts exist
+- [ ] ATT authorization obtained before Apple-defined tracking or IDFA access (see [5.1.2](rules/5-legal.md#512-data-use-and-sharing)); first-party analytics alone does not require ATT
+- [ ] If app supports account creation, deletion can be initiated in-app; a direct link to complete deletion on the web is allowed
 - [ ] Data minimization - only requesting necessary permissions
 - [ ] User consent obtained before data collection
 
