@@ -1,7 +1,7 @@
 {
   "name": "app-store-review",
-  "version": "1.3.2",
-  "description": "Evaluates code against Apple's App Store Review Guidelines for iOS, macOS, tvOS, watchOS, and visionOS apps.",
+  "version": "2.0.0",
+  "description": "Reviews app code and App Store metadata, prepares fixes, and verifies authorized App Store Connect updates.",
   "author": {
     "name": "safaiyeh",
     "url": "https://github.com/safaiyeh"
@@ -24,15 +24,16 @@
   "interface": {
     "displayName": "App Store Review",
     "shortDescription": "Audit apps for App Store review risk",
-    "longDescription": "Evaluate app code against Apple's App Store Review Guidelines before submission, with coverage for privacy, payments, safety, performance, design, and legal risks.",
+    "longDescription": "Review app code and local or connected App Store metadata, report evidence and coverage, and prepare and verify authorized metadata fixes.",
     "developerName": "safaiyeh",
     "category": "Coding",
     "capabilities": [
-      "Read"
+      "Read",
+      "Write"
     ],
     "websiteURL": "https://github.com/safaiyeh/app-store-review-skill",
     "defaultPrompt": [
-      "Review this app for App Store compliance."
+      "Audit this app's code or App Store metadata and prepare fixes for review."
     ],
     "brandColor": "#0A84FF"
   }
