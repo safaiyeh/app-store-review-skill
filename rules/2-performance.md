@@ -20,6 +20,8 @@ description: App Store Review Guidelines Section 2 - Performance (app completene
 
 **Known App Review devices (as of August 2026):** rejection notices list the review device as **iPad Air 11-inch (M3)** and **iPhone 17 Pro Max**. Reviewers now test on iPhone as well as iPad — an app that only works well on one form factor can be rejected even if the other is your primary target. Test on both (or equivalent simulators) before submitting.
 
+**Logging:** Routine production diagnostics are not a rejection issue by themselves. Flag exposed tokens, credentials, or personal information under [1.6 Data Security](1-safety.md#16-data-security) / [5.1 Privacy](5-legal.md#51-privacy), and remove or redact sensitive values as described in [Apple's logging guidance](https://developer.apple.com/documentation/os/generating-log-messages-from-your-code). Use 2.1 for debug UI or behavior that exposes an incomplete experience, not merely the presence of a logging call.
+
 **Swift code patterns to flag:**
 ```swift
 // FLAG: Placeholder content
@@ -32,13 +34,12 @@ description: App Store Review Guidelines Section 2 - Performance (app completene
 "test_image"
 "sample_data"
 
-// FLAG: Debug code in production
-#if DEBUG
-    // Ensure debug-only code doesn't affect production
-#endif
+// FLAG: Sensitive data exposed in production logs (1.6 / 5.1)
+print("Access token: \(accessToken)") // Remove the secret or redact it
 
-print("Debug:") // Remove debug prints
-NSLog("Test") // Remove test logs
+// ✅ GOOD: Routine diagnostics without sensitive data
+print("Sync completed")
+NSLog("Cache refreshed")
 ```
 
 **React Native code patterns to flag:**
@@ -55,15 +56,18 @@ NSLog("Test") // Remove test logs
   "feature": "Coming soon" // REJECTION
 }
 
-// FLAG: Debug code in production
-console.log('Debug:', data); // Remove before submission
-console.warn('Test warning'); // Remove before submission
-__DEV__ && console.log('Dev only'); // OK - but verify
+// FLAG: Sensitive data exposed in production logs (1.6 / 5.1)
+console.log('Access token:', accessToken); // Remove the secret or redact it
+console.warn('User profile:', userProfile); // Exposes personal information
+
+// ✅ GOOD: Routine diagnostics without sensitive data
+console.log('Sync completed');
+console.warn('Retrying request');
 
 // FLAG: Check for leftover TODO/FIXME in user-facing code
 // TODO: implement this feature // Not in user-facing strings!
 
-// ✅ GOOD: Use __DEV__ for debug-only code
+// Optional: Keep development-only diagnostics out of production
 if (__DEV__) {
   // This won't run in production builds
   console.log('Debug info');
@@ -881,7 +885,7 @@ const authenticate = async () => {
 
 ## React Native Pre-Submission Checklist
 
-- [ ] Remove all `console.log` statements (or wrap in `__DEV__`)
+- [ ] Production logs do not expose tokens, credentials, or personal information; routine diagnostics are allowed
 - [ ] Remove placeholder content from all screens
 - [ ] Test on real iOS device (not just simulator)
 - [ ] Test on both iPhone and iPad — App Review uses iPad Air 11-inch (M3) and iPhone 17 Pro Max (as of August 2026)

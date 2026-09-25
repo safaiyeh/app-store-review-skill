@@ -292,7 +292,8 @@ class PermissionManager {
 
 #### (v) Account Sign-In
 - [ ] Let users use app without login if no significant account-based features
-- [ ] If app supports account creation, MUST offer account deletion within app
+- [ ] If app supports account creation, users MUST be able to initiate account deletion within the app; web completion is allowed through a direct link to the deletion page
+- [ ] Do not substitute instructions-only or generic account pages for a deletion flow
 - [ ] Do NOT require personal info unless directly relevant to core functionality or required by law
 - [ ] Pulling basic profile info, sharing to the social network, or inviting friends are NOT considered core app functionality
 - [ ] If not related to social network, provide access without social login
@@ -300,9 +301,11 @@ class PermissionManager {
 - [ ] May not store social credentials off device
 - [ ] May only use credentials/tokens to directly connect to the social network from the app itself, while the app is in use
 
-**Swift implementation:**
+Apple's [account deletion guidance](https://developer.apple.com/support/offering-account-deletion-in-your-app/) permits direct web completion and reasonable identity verification or confirmation steps. Apps outside highly regulated industries must not require a phone call, email, or other customer support flow to delete an account; highly regulated apps may use additional customer service flows. Verify what the destination actually offers, not just its URL.
+
+**Swift implementation (native deletion example):**
 ```swift
-// REQUIRED: Account deletion
+// One option: complete deletion natively (direct web completion is also allowed)
 func deleteAccount() async throws {
     // Must actually delete user data, not just deactivate
     try await api.deleteUserData(userId: currentUser.id)
@@ -321,8 +324,8 @@ class SettingsViewController {
 
 **React Native implementation:**
 ```typescript
-// REQUIRED: Account deletion must be accessible in-app
-// Cannot just link to website - must be actionable within app
+// REQUIRED: Users can initiate deletion from within the app
+// One option: native deletion; a direct web completion link is also allowed
 
 const deleteAccount = async () => {
   // Show confirmation
@@ -355,7 +358,7 @@ const deleteAccount = async () => {
   );
 };
 
-// REQUIRED: Accessible from Settings screen
+// Easy to find within the app, for example in Settings
 const SettingsScreen = () => (
   <ScrollView>
     {/* Other settings */}
@@ -367,9 +370,15 @@ const SettingsScreen = () => (
   </ScrollView>
 );
 
-// ❌ BAD: Linking to website for deletion
-const badDeleteAccount = () => {
-  Linking.openURL('https://example.com/delete-account'); // NOT SUFFICIENT
+// ✅ GOOD: Alternative handler for the in-app Delete Account button
+// This page lets the user complete deletion, with reauthentication if needed
+const deleteAccountOnWeb = () => {
+  return Linking.openURL('https://example.com/delete-account');
+};
+
+// ❌ BAD: The destination only gives instructions, with no deletion flow
+const openDeletionInstructions = () => {
+  return Linking.openURL('https://example.com/help/delete-account');
 };
 ```
 
@@ -400,13 +409,17 @@ const badDeleteAccount = () => {
 - [ ] Must clearly disclose third-party sharing (including third-party AI)
 - [ ] Must obtain explicit permission before sharing
 - [ ] Data may only be shared to improve app or serve advertising
-- [ ] Must use App Tracking Transparency APIs for cross-app tracking
+- [ ] Must obtain App Tracking Transparency authorization before Apple-defined tracking or IDFA access
 - [ ] May NOT require system functionalities (push, location, tracking) for functionality or compensation
 - [ ] Unauthorized data sharing may result in removal from sale and Developer Program
 
-**Swift implementation:**
+**When ATT applies:** [Apple defines tracking](https://developer.apple.com/app-store/user-privacy-and-data-use/) as linking app user/device data with data from other companies' apps, websites, or offline properties for targeted advertising or advertising measurement, or sharing it with data brokers, subject to Apple's documented exceptions. ATT authorization is also required for IDFA access.
+
+First-party analytics alone does not require ATT. A `logEvent`, `setUserId`, or ad SDK import does not establish tracking. Review the SDK's configuration and actual data use, including advertising integrations, automatic collection at startup, and the provider's reuse of data. Disabling IDFA alone does not rule out tracking through other identifiers. Privacy disclosures and other applicable consent requirements still apply.
+
+**Swift implementation (when tracking or accessing IDFA):**
 ```swift
-// REQUIRED: App Tracking Transparency
+// Obtain ATT authorization before enabling tracking or accessing IDFA
 import AppTrackingTransparency
 
 func requestTrackingAuthorization() {
@@ -427,51 +440,36 @@ func requestTrackingAuthorization() {
 
 **React Native implementation (react-native-tracking-transparency):**
 ```typescript
-// REQUIRED: App Tracking Transparency for iOS 14.5+
-import {
-  requestTrackingPermission,
-  getTrackingStatus,
-} from 'react-native-tracking-transparency';
+import { requestTrackingPermission } from 'react-native-tracking-transparency';
+import analytics from '@react-native-firebase/analytics';
 
-// Request on app startup or before showing ads
-const requestTracking = async () => {
+// ✅ GOOD: First-party usage analytics without ATT
+// Assumes advertising integrations and IDFA collection are disabled, with no
+// data broker sharing or provider reuse for cross-company advertising
+analytics().setUserId(userId);
+analytics().logEvent('screen_view');
+
+// ❌ BAD: Starts an SDK configured to link user data across companies for
+// ad targeting/measurement before ATT authorization
+initializeTrackingAdSDK();
+
+// ✅ GOOD: Obtain ATT authorization before starting that tracking SDK
+// App helpers below represent SDK-specific setup. Disable automatic tracking
+// at startup so the SDK cannot collect tracking data before this check.
+const initializeAdvertising = async () => {
   const status = await requestTrackingPermission();
 
-  switch (status) {
-    case 'authorized':
-      // User allowed tracking
-      enableTracking();
-      initializeAdSDKs();
-      break;
-    case 'denied':
-    case 'restricted':
-    case 'not-determined':
-      // User denied or hasn't decided - NO TRACKING
-      disableTracking();
-      initializeAdSDKsWithoutTracking();
-      break;
+  if (status === 'authorized') {
+    await initializeTrackingAdSDK();
+  } else {
+    // No tracking or IDFA access for any other status
+    disableTracking();
+    // Optional, only if the SDK supports ads without tracking or IDFA access
+    await initializeAdsWithoutTracking();
   }
 };
 
-// Check status before any tracking
-const checkTrackingStatus = async () => {
-  const status = await getTrackingStatus();
-  return status === 'authorized';
-};
-
-// ❌ BAD: Tracking without ATT prompt
-import analytics from '@react-native-firebase/analytics';
-analytics().setUserId(userId); // Without ATT permission = REJECTION
-
-// ✅ GOOD: Check ATT before tracking
-const trackUser = async (userId: string) => {
-  const canTrack = await checkTrackingStatus();
-  if (canTrack) {
-    analytics().setUserId(userId);
-  }
-};
-
-// Also required: Add to Info.plist
+// If requesting ATT, also add to Info.plist:
 // <key>NSUserTrackingUsageDescription</key>
 // <string>This identifier will be used to deliver personalized ads</string>
 ```
@@ -775,13 +773,14 @@ if (await StoreReview.hasAction()) {
 - [ ] Permissions requested contextually (not all at app launch)
 
 ### Tracking & Privacy
-- [ ] ATT prompt shown before any tracking (iOS 14.5+)
-- [ ] NSUserTrackingUsageDescription in Info.plist
-- [ ] No tracking if user denies ATT
+- [ ] SDK configuration and data use checked for Apple-defined tracking or IDFA access; first-party analytics alone does not require ATT
+- [ ] ATT authorization obtained before tracking or IDFA access (iOS 14.5+), including automatic SDK collection at startup
+- [ ] NSUserTrackingUsageDescription in Info.plist if requesting ATT
+- [ ] No tracking or IDFA access unless ATT status is authorized
 - [ ] Privacy policy link in app settings
 
 ### Account & Data
-- [ ] Account deletion accessible within app (not just website link)
+- [ ] If app supports account creation, deletion can be initiated in-app; any web link goes directly to the page that completes deletion
 - [ ] Sensitive data stored in Keychain, not AsyncStorage
 - [ ] HTTPS for all API calls
 - [ ] No hardcoded secrets in JavaScript bundle
@@ -789,9 +788,9 @@ if (await StoreReview.hasAction()) {
 ## React Native Privacy Implementation
 
 ```typescript
-// Complete privacy setup for React Native
+// App helpers below represent SDK-specific configuration
 
-// 1. ATT on startup (before any tracking)
+// 1. Separate first-party analytics from tracking/IDFA-dependent SDKs
 // Expo:
 import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 // Or bare RN:
@@ -799,13 +798,20 @@ import { requestTrackingPermission } from 'react-native-tracking-transparency';
 
 useEffect(() => {
   const initPrivacy = async () => {
-    // Request ATT first
+    // Configured without IDFA, cross-company advertising use, or broker sharing
+    // Obtain any other required data-collection consent before initialization
+    await initializeFirstPartyAnalytics();
+
+    // App configuration: request ATT only when tracking or IDFA access is used
+    if (!usesTrackingOrIDFA) return;
+
+    // Keep automatic SDK tracking disabled until authorized
     const trackingStatus = await requestTrackingPermission();
 
-    // Only initialize tracking SDKs if authorized
     if (trackingStatus === 'authorized') {
-      await initializeAnalytics();
-      await initializeAdSDKs();
+      await initializeTrackingAdSDK();
+    } else {
+      disableTracking();
     }
   };
   initPrivacy();
