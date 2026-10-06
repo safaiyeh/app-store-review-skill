@@ -151,7 +151,7 @@ const text = "Also available on Android"; // REJECTION
 - [ ] ATT authorization obtained before Apple-defined tracking or IDFA access (see [5.1.2](rules/5-legal.md#512-data-use-and-sharing)); first-party analytics alone does not require ATT
 - [ ] If app supports account creation, deletion can be initiated in-app; a direct link to complete deletion on the web is allowed
 - [ ] Data minimization - only requesting necessary permissions
-- [ ] Buttons on custom screens before a permission prompt say "Continue" or "Next", not "Allow" or "Enable" (see [5.1.1(iv)](rules/5-legal.md#iv-access))
+- [ ] Custom screens before a permission prompt have only one button, labeled neutrally (e.g. "Continue" or "Next"), that opens the system prompt; no "Allow"/"Enable" wording or Cancel/Close actions (see [5.1.1(iv)](rules/5-legal.md#iv-access))
 - [ ] User consent obtained before data collection
 
 ### Payments (Section 3.1)
