@@ -290,8 +290,11 @@ class PermissionManager {
 - [ ] Do NOT manipulate, trick, or force consent
 - [ ] Provide alternatives for users who don't consent
 - [ ] A custom screen shown before a system permission prompt uses a neutral button to proceed, such as "Continue" or "Next" — not "Allow", "Enable", "Turn On", or "Grant Access"
+- [ ] The custom pre-permission screen has only one button, which opens the system prompt; do not include Cancel, Close, or other actions that let users bypass that prompt
 - [ ] The screen's text may explain why the permission helps; the button must not ask for the grant
 - [ ] After a denial, explain what won't work and link to Settings rather than asking again
+
+Apple's [privacy guidance for pre-alert screens](https://developer.apple.com/design/human-interface-guidelines/privacy#Pre-alert-screens-windows-or-views) requires a single action that opens the system permission alert. A neutral "Continue" button does not make a screen compliant if it also offers Cancel or Close. Users can decline permission in the system alert; this restriction applies to the custom pre-alert screen, not to the system's denial option.
 
 App Review rejects pre-permission screens whose button directs people to grant access. The rejection reads: "A custom message appears before the permission request, and to proceed users press a 'Enable Location' button. Use words like 'Continue' or 'Next' on the button instead." The same reasoning applies to any permission (location, notifications, camera, contacts, tracking). Treat persistent in-app banners or buttons that tell people to "Allow" a permission as the same risk; a banner that states the effect of the current setting and links to Settings is the pattern Apple suggests.
 
