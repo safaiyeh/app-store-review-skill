@@ -119,6 +119,9 @@ console.log('Access token:', accessToken); // Remove the secret or redact it
 <GoogleSigninButton /> // Also offer a login meeting 4.8 criteria
                        // (Sign in with Apple is the simplest option)
 
+// 🟡 Pre-permission button that asks for the grant (5.1.1(iv))
+<Button title="Enable Location" onPress={requestLocation} /> // Use "Continue" or "Next"
+
 // 🟡 Custom review prompts (5.6.1)
 showCustomAlert('Rate us 5 stars!'); // Use StoreReview.requestReview()
 ```
@@ -148,6 +151,7 @@ const text = "Also available on Android"; // REJECTION
 - [ ] ATT authorization obtained before Apple-defined tracking or IDFA access (see [5.1.2](rules/5-legal.md#512-data-use-and-sharing)); first-party analytics alone does not require ATT
 - [ ] If app supports account creation, deletion can be initiated in-app; a direct link to complete deletion on the web is allowed
 - [ ] Data minimization - only requesting necessary permissions
+- [ ] Buttons on custom screens before a permission prompt say "Continue" or "Next", not "Allow" or "Enable" (see [5.1.1(iv)](rules/5-legal.md#iv-access))
 - [ ] User consent obtained before data collection
 
 ### Payments (Section 3.1)

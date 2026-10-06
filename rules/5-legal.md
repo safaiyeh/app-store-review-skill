@@ -289,6 +289,41 @@ class PermissionManager {
 - [ ] Respect user permission settings
 - [ ] Do NOT manipulate, trick, or force consent
 - [ ] Provide alternatives for users who don't consent
+- [ ] A custom screen shown before a system permission prompt uses a neutral button to proceed, such as "Continue" or "Next" — not "Allow", "Enable", "Turn On", or "Grant Access"
+- [ ] The screen's text may explain why the permission helps; the button must not ask for the grant
+- [ ] After a denial, explain what won't work and link to Settings rather than asking again
+
+App Review rejects pre-permission screens whose button directs people to grant access. The rejection reads: "A custom message appears before the permission request, and to proceed users press a 'Enable Location' button. Use words like 'Continue' or 'Next' on the button instead." The same reasoning applies to any permission (location, notifications, camera, contacts, tracking). Treat persistent in-app banners or buttons that tell people to "Allow" a permission as the same risk; a banner that states the effect of the current setting and links to Settings is the pattern Apple suggests.
+
+**Swift:**
+```swift
+// ❌ REJECTION (5.1.1(iv)): the button before the system prompt asks for the grant
+Button("Enable Location") { locationManager.requestWhenInUseAuthorization() }
+Button("Allow Notifications") { requestNotificationAuthorization() }
+
+// ✅ GOOD: explain the benefit in text, keep the button neutral
+Text("Location lets the app alert you when you're near a place you saved.")
+Button("Continue") { locationManager.requestWhenInUseAuthorization() }
+
+// ✅ GOOD: after a denial, state the effect and link to Settings
+Text("Location is off, so nearby alerts are paused.")
+Button("Open Settings") {
+    UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+}
+```
+
+**React Native / Expo:**
+```typescript
+// ❌ REJECTION (5.1.1(iv))
+<Button title="Enable Location" onPress={() => Location.requestForegroundPermissionsAsync()} />
+
+// ✅ GOOD
+<Text>Location lets the app alert you when you're near a place you saved.</Text>
+<Button title="Continue" onPress={() => Location.requestForegroundPermissionsAsync()} />
+
+// ✅ GOOD: after a denial
+<Button title="Open Settings" onPress={() => Linking.openSettings()} />
+```
 
 #### (v) Account Sign-In
 - [ ] Let users use app without login if no significant account-based features
