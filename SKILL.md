@@ -4,7 +4,7 @@ description: Evaluates code against Apple's App Store Review Guidelines. Use thi
 license: MIT
 metadata:
   author: safaiyeh
-  version: "1.3.2"
+  version: "1.3.3"
 ---
 
 # App Store Review Guidelines Checker
