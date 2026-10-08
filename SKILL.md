@@ -126,7 +126,7 @@ console.log('Access token:', accessToken); // Remove the secret or redact it
 const [agreed, setAgreed] = useState(true); // Start unchecked; gate sign-up on it
 
 // 🟡 "Free" in screenshots, including text in the captured app screen (2.3.7)
-<Text>Refuel (Free)</Text> // Pricing information when shown in a screenshot
+<Text>Get Started (Free)</Text> // Pricing information when shown in a screenshot
 
 // 🟡 Custom review prompts (5.6.1)
 showCustomAlert('Rate us 5 stars!'); // Use StoreReview.requestReview()
@@ -175,6 +175,7 @@ const text = "Also available on Android"; // REJECTION
 - [ ] UGC: users agree to terms (EULA) stating zero tolerance for objectionable content and abusive users before sign-up/login, via an unchecked checkbox or explicit button, in the flow a new user sees on a fresh install (see [1.2](rules/1-safety.md#terms-agreement-and-moderation-commitments))
 - [ ] UGC: reports acted on within 24 hours by removing the content and ejecting the offending user
 - [ ] UGC: blocking notifies the developer and removes the blocked user's content from the feed immediately
+- [ ] UGC: App Review Notes include a screen recording from a physical device showing the terms agreement before sign-up/login, flagging content, and blocking users
 - [ ] Kids and teens receive age-appropriate experiences inside the app
 - [ ] Parental gates for Kids Category apps
 - [ ] No false information or prank features

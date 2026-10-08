@@ -254,7 +254,7 @@ const SUPPORT_URL = 'https://example.com/support';
 
 ### Terms Agreement and Moderation Commitments
 
-When App Review rejects a UGC app under 1.2, the rejection lists the precautions it expects. The wording is: "Require that users agree to terms (EULA) and these terms must make it clear that there is no tolerance for objectionable content or abusive users", "A mechanism for users to block abusive users. Blocking should also notify the developer of the inappropriate content and should remove it from the user's feed instantly", and "The developer must act on objectionable content reports within 24 hours by removing the content and ejecting the user who provided the offending content." Check each of these, not just that the four features above exist.
+When App Review rejects a UGC app under 1.2, the rejection lists the precautions it expects. The wording is: "To resolve this issue, revise the app to implement the following precautions: require that users agree to terms (EULA) and these terms must make it clear that there is no tolerance for objectionable content or abusive users, a method for filtering objectionable content, a mechanism for users to flag objectionable content, a mechanism for users to block abusive users (blocking should also notify the developer of the inappropriate content and should remove it from the user's feed instantly), and the developer must act on objectionable content reports within 24 hours by removing the content and ejecting the user who provided the offending content." Check each of these, not just that the four features above exist.
 
 **Terms agreement (EULA):**
 - [ ] The terms are shown and agreed to **before** sign-up or login completes; showing a link somewhere in Settings, or only on the App Store page, is not enough
@@ -270,6 +270,10 @@ When App Review rejects a UGC app under 1.2, the rejection lists the precautions
 **Blocking:**
 - [ ] Blocking a user also **notifies the developer** (sends a report to the moderation queue) so the content can be reviewed
 - [ ] The blocked user's content disappears from the blocker's feed, comments, and messages **immediately**, without a refresh or app restart
+
+**Screen recording for App Review:**
+- [ ] Record a screen recording on a physical device that shows the EULA or terms of use agreement presented before registering or logging in, the mechanism to flag objectionable content, and the mechanism to block abusive users
+- [ ] Put the recording in the Notes field of the App Review Information section in App Store Connect. After a 1.2 rejection, App Review asks for this recording in the reply and for future submissions
 
 **Swift:**
 ```swift
