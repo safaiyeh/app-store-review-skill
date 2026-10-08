@@ -183,6 +183,7 @@ Key packages covered:
 - IAP without restore purchases
 - UGC without moderation
 - UGC without removal workflows or a compliance improvement plan
+- UGC without a terms (EULA) agreement before sign-up/login, 24-hour report handling, or blocking that hides content immediately
 - Kids apps without parental gates
 - Live Activities or push notifications used for spam, phishing, or unsolicited messages
 
@@ -191,6 +192,7 @@ Key packages covered:
 - Over-requesting permissions
 - Unjustified background modes
 - References to other platforms
+- "Free" or other pricing words in screenshots, including in-app UI text
 - Custom review prompts instead of the system API
 
 ## When It Triggers
