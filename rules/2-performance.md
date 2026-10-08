@@ -268,6 +268,14 @@ const restorePurchases = async () => {
 - [ ] Metadata (names, subtitles, screenshots, previews) must not include prices, terms, or descriptions that are not specific to that metadata type
 - [ ] Apple may modify inappropriate keywords at any time or take other steps to prevent abuse
 
+**"Free" counts as pricing information:**
+- [ ] Words like "Free", "免費", "Gratis", "$0", "No cost", or "Free trial" in the app name, subtitle, keywords, screenshots, or previews are treated as pricing information, even when the app really is free
+- [ ] This applies to text drawn inside the app UI shown in a screenshot, not just marketing captions added on top. A captured screen with a label such as "Refuel (Free)" or a "FREE" badge is flagged the same way
+- [ ] Check every screenshot and preview frame for price words in captions, overlays, and the in-app screen itself; retake screenshots from a build or demo state that does not show them
+- [ ] Describe what the user gets instead ("Unlimited refuels", "No account needed") rather than the price
+
+App Review cites 2.3.7 for screenshots that include "Free" in either the caption or the captured app screen. Being accurate about the price is not a defense: the guideline bars pricing information in metadata regardless of whether it is true.
+
 ### 2.3.8 Age-Appropriate Metadata
 
 - [ ] Metadata must be appropriate for ALL audiences
