@@ -182,8 +182,9 @@ Apps with user-generated content present particular challenges, ranging from int
 ### Required UGC Features (ALL MANDATORY)
 
 - [ ] **Content Filtering:** A method for filtering objectionable material from being posted
-- [ ] **Reporting Mechanism:** A way to report offensive content with timely responses
+- [ ] **Reporting Mechanism:** A way to report offensive content with timely responses (App Review expects action within 24 hours)
 - [ ] **User Blocking:** The ability to block abusive users from the service
+- [ ] **Terms Agreement (EULA):** Users must agree to terms that state zero tolerance for objectionable content and abusive users before they can sign up or log in (see [Terms Agreement and Moderation Commitments](#terms-agreement-and-moderation-commitments))
 - [ ] **Contact Information:** Published contact information so users can easily reach you
 
 **Swift implementation:**
@@ -251,6 +252,61 @@ const SUPPORT_EMAIL = 'support@example.com';
 const SUPPORT_URL = 'https://example.com/support';
 ```
 
+### Terms Agreement and Moderation Commitments
+
+When App Review rejects a UGC app under 1.2, the rejection lists the precautions it expects. The wording is: "To resolve this issue, revise the app to implement the following precautions: require that users agree to terms (EULA) and these terms must make it clear that there is no tolerance for objectionable content or abusive users, a method for filtering objectionable content, a mechanism for users to flag objectionable content, a mechanism for users to block abusive users (blocking should also notify the developer of the inappropriate content and should remove it from the user's feed instantly), and the developer must act on objectionable content reports within 24 hours by removing the content and ejecting the user who provided the offending content." Check each of these, not just that the four features above exist.
+
+**Terms agreement (EULA):**
+- [ ] The terms are shown and agreed to **before** sign-up or login completes; showing a link somewhere in Settings, or only on the App Store page, is not enough
+- [ ] The terms explicitly say there is **zero tolerance** for objectionable content and abusive users, and that violating content is removed and its author banned
+- [ ] Agreement requires an action by the user: an "I agree" button, or a checkbox that starts **unchecked**. A pre-checked box, or text such as "By continuing you agree" with no separate action, has been rejected
+- [ ] Sign-up or login cannot proceed until the user has agreed
+- [ ] The gate is part of the flow a **new** user sees on a fresh install. App Review installs the app fresh and signs in with the demo account, so a terms prompt shown only to already signed-in users after an update does not count as "before login". Existing users can get the prompt too, but it does not replace the gate in the sign-up/login flow
+
+**Reports:**
+- [ ] Reports are acted on within **24 hours**; document this in the terms and in the App Review notes
+- [ ] Confirmed violations result in both removing the content **and** ejecting (banning or suspending) the user who posted it; removing the content alone does not meet the expectation
+
+**Blocking:**
+- [ ] Blocking a user also **notifies the developer** (sends a report to the moderation queue) so the content can be reviewed
+- [ ] The blocked user's content disappears from the blocker's feed, comments, and messages **immediately**, without a refresh or app restart
+
+The block endpoint should atomically persist both the block and a durable moderation-queue item before returning success. Make retries idempotent so a lost response can be retried without creating duplicate reports. A separate client-side report request can be lost if the app closes or the network fails after the block succeeds. Any later notification delivery should retry from the durable queue.
+
+For immediate hiding, filter content using pending and confirmed blocks, including content arriving from an in-flight fetch. Treat pending blocks as optimistic state: if the request fails, show the failure, reconcile with the server's block state, and offer a retry instead of presenting the block as confirmed.
+
+**Screen recording when requested by App Review:**
+
+App Review may request a physical-device recording as evidence after a 1.2 rejection, as in [this reported rejection](https://github.com/safaiyeh/app-store-review-skill/pull/24#issuecomment-6055102790). Provide it when requested; it is not a universal prerequisite for every UGC submission.
+
+- [ ] If requested, record the EULA or terms of use agreement presented before registering or logging in, the mechanism to flag objectionable content, and the mechanism to block abusive users on a physical device
+- [ ] Provide the recording in the App Review reply and include an accessible link in the Notes field of App Review Information for future submissions when the reviewer requests it
+
+**Swift:**
+```swift
+// ❌ REJECTION (1.2): pre-checked box, and the terms say nothing about objectionable content
+@State private var agreedToTerms = true
+
+// ✅ GOOD: unchecked by default, sign-up blocked until agreed
+@State private var agreedToTerms = false
+Toggle("I agree to the Terms of Use, which have zero tolerance for objectionable content or abusive users", isOn: $agreedToTerms)
+Button("Create Account") { signUp() }
+    .disabled(!agreedToTerms)
+```
+
+**React Native / Expo:**
+```typescript
+// ❌ REJECTION (1.2): pre-checked, and the terms gate only appears to signed-in users after an update
+const [agreed, setAgreed] = useState(true);
+if (isLoggedIn && !user.acceptedTermsVersion) showTermsModal();
+
+// ✅ GOOD: unchecked by default, part of the sign-up/login flow
+const [agreed, setAgreed] = useState(false);
+<Checkbox value={agreed} onValueChange={setAgreed} />
+<Text>I agree to the Terms of Use. There is zero tolerance for objectionable content or abusive users.</Text>
+<Button title="Sign Up" disabled={!agreed} onPress={signUp} />
+```
+
 ### Content That Results in Removal
 
 Apps primarily used for the following will be removed WITHOUT notice:
@@ -286,7 +342,7 @@ useEffect(() => {
 
 Apple's current 1.2 language makes the developer responsible for removing content that violates the guideline, the app's terms of service, or community standards. If Apple finds violating content, expect to remove it and explain how compliance will improve.
 
-- [ ] Violating content must be removable quickly when detected or reported
+- [ ] Violating content must be removable quickly when detected or reported (within 24 hours of a report), and the user who posted it ejected
 - [ ] App Review may require a concrete compliance improvement plan before the app can stay on the App Store
 - [ ] Egregious or repeated UGC failures can trigger immediate app removal and Developer Program removal
 
