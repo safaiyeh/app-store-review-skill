@@ -20,7 +20,7 @@
     "react-native",
     "expo"
   ],
-  "skills": "./",
+  "skills": "./skills/",
   "interface": {
     "displayName": "App Store Review",
     "shortDescription": "Audit apps for App Store review risk",
