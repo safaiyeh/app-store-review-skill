@@ -104,15 +104,15 @@ if (__DEV__) {
 
 All metadata — including privacy information, app description, screenshots, and previews — must accurately reflect the core app experience and remain up-to-date.
 
-### 2.3.1 Hidden/Undocumented Features and Misleading Marketing
+### 2.3.1 Feature Disclosure and Misleading Marketing
 
 #### 2.3.1(a) Feature Disclosure
 
-- [ ] Do NOT include hidden, dormant, or undocumented features
-- [ ] App functionality must be clear to end users and App Review
-- [ ] All new features must be described with specificity in Notes for Review
+- [ ] All new features, functionality, and product changes must be described with specificity in Notes for Review
 - [ ] Generic descriptions will be REJECTED
 - [ ] All new features must be accessible for review
+
+The prohibition on hidden, dormant, or undocumented features moved to [2.5.19](#2519-hidden-dormant-or-undocumented-features) in October 2026. Cite 2.3.1 for disclosure/marketing findings and 2.5.19 for concealed functionality.
 
 **Misleading marketing — whether within or outside the App Store — is grounds for removal from the App Store, a block from installing via alternative distribution, and termination of the developer account:**
 - Promoting content/services app doesn't offer
@@ -343,6 +343,16 @@ import googlePlayBadge from './assets/google-play-badge.png'; // Remove from iOS
 - [ ] Events must happen at selected times/dates across storefronts
 - [ ] Event deep link must direct to proper destination
 - [ ] Events may be monetized, following the Section 3 Business rules
+
+### 2.3.14 Creative Assets
+
+Creative assets include images and videos for product page headers and search results. They may depict the app's content, functionality, or brand beyond app-in-use footage; screenshots and previews still follow [2.3.3](#233-screenshots) and [2.3.4](#234-previews).
+
+- [ ] Assets relate to the app and follow standard metadata rules
+- [ ] Appropriate for all audiences, even when the app has a higher age rating
+- [ ] No inappropriate content, misleading references to other apps, unverifiable product claims, or specific/discounted prices
+
+Inspect the supplied asset files or App Store Connect metadata. If unavailable, identify the assets requiring verification. See [Apple's asset best practices](https://developer.apple.com/app-store/asset-best-practices/).
 
 ---
 
@@ -876,6 +886,17 @@ const authenticate = async () => {
 - [ ] Provide easily accessible close/skip buttons (large enough for easy dismissal)
 - [ ] Apps must include ability to report any inappropriate or age-inappropriate ads
 
+### 2.5.19 Hidden, Dormant, or Undocumented Features
+
+This rule carries forward the hidden-feature prohibition previously in 2.3.1. Functionality must be clear to users and App Review; concealing undocumented features, including through code obfuscation, can lead to app removal and developer account termination.
+
+**Review for:**
+- [ ] Remote flags, backend configuration, date checks, reviewer detection, or alternate routes that conceal functionality during review and reveal it after approval
+- [ ] Obfuscated code that hides undocumented functionality
+- [ ] Features available to users but inaccessible to App Review; cross-check [2.3.1](#231-feature-disclosure-and-misleading-marketing) review notes
+
+Trace what a flag or route enables before reporting a violation. The presence of remote configuration, a feature flag, or minified code alone does not establish concealment. Downloaded executable code that changes functionality also requires review under [2.5.2](#252-self-contained-bundles).
+
 ---
 
 ## React Native Packages Reference
@@ -901,5 +922,7 @@ const authenticate = async () => {
 - [ ] Verify no hardcoded IP addresses
 - [ ] Check all background modes are legitimately used
 - [ ] Ensure OTA updates (expo-updates/CodePush) only deliver bug fixes, not features
+- [ ] No concealed functionality enabled after approval to evade review (2.5.19)
+- [ ] Creative assets meet 2.3.14, including product page headers and search result assets
 - [ ] Test on IPv6-only network
 - [ ] Verify biometrics use LocalAuthentication APIs

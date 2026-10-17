@@ -4,7 +4,7 @@ description: Evaluates code against Apple's App Store Review Guidelines. Use thi
 license: MIT
 metadata:
   author: safaiyeh
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 # App Store Review Guidelines Checker
@@ -13,7 +13,7 @@ Comprehensive guide for evaluating iOS, macOS, tvOS, watchOS, and visionOS app c
 
 **Supports:** Swift, Objective-C, React Native, and Expo apps
 
-**Guidelines current through:** Apple's June 8, 2026 App Review Guidelines update (verified still current as of August 29, 2026). Also incorporates post-June policy announcements: social media age-rating questions (mandatory September 2026), Republic of Korea age rating changes (August/October 2026), and Brazil/EU alternative payment and distribution terms.
+**Guidelines current through:** Apple's [October 16, 2026 App Review Guidelines update](https://developer.apple.com/news/?id=92th7e5i), verified against the current English guidelines. Includes AI content creation and nonconsensual intimate imagery safeguards (1.2), creative assets (2.3.14), hidden features (2.5.19), revised purchase-link entitlements (3.1.1(a)), and alternative-distribution enforcement (5). Also covers social media age-rating questions, Republic of Korea age rating changes, and Brazil/EU alternative payment and distribution terms.
 
 ## When to Apply
 
@@ -30,8 +30,8 @@ Read individual rule files for detailed explanations, checklists, and code examp
 
 | Section | File | Key Topics |
 |---------|------|------------|
-| **1. Safety** | [rules/1-safety.md](rules/1-safety.md) | Objectionable content, UGC moderation, Kids Category, physical harm, data security |
-| **2. Performance** | [rules/2-performance.md](rules/2-performance.md) | App completeness, metadata accuracy, hardware compatibility, software requirements |
+| **1. Safety** | [rules/1-safety.md](rules/1-safety.md) | Objectionable content, UGC and AI content safeguards, Kids Category, physical harm, data security |
+| **2. Performance** | [rules/2-performance.md](rules/2-performance.md) | App completeness, metadata and creative assets, hardware compatibility, software requirements, hidden features |
 | **3. Business** | [rules/3-business.md](rules/3-business.md) | In-app purchase, subscriptions, cryptocurrencies, other business models |
 | **4. Design** | [rules/4-design.md](rules/4-design.md) | Copycats, minimum functionality, spam, extensions, Apple services, login |
 | **5. Legal** | [rules/5-legal.md](rules/5-legal.md) | Privacy, data collection, intellectual property, gambling, VPN, MDM, developer code of conduct |
@@ -53,6 +53,8 @@ Read individual rule files for detailed explanations, checklists, and code examp
 
 For ATT findings, verify the SDK's configuration and actual data use. For account deletion, verify the destination and flow. For logging, inspect the data exposed and any redaction. If that evidence is unavailable, report what needs verification instead of declaring a rejection based on an API call, SDK import, or URL alone.
 
+For payments, establish the storefront, platform, and applicable exceptions before flagging external links or checkout (see [3.1.1(a)](rules/3-business.md#311a-link-to-other-purchase-methods) and [3.1.3](rules/3-business.md#313-other-purchase-methods)).
+
 ### Critical Issues (Immediate Rejection)
 
 **Swift:**
@@ -63,7 +65,7 @@ let selector = NSSelectorFromString("_privateMethod")
 // 🔴 Hardcoded secrets
 let apiKey = "sk_live_xxxxx"
 
-// 🔴 External payment for digital goods
+// 🔴 External payment for digital goods where IAP is required
 func purchaseDigitalContent() {
     openStripeCheckout() // Use StoreKit instead
 }
@@ -74,7 +76,7 @@ func purchaseDigitalContent() {
 // 🔴 Hardcoded secrets in JS bundle
 const API_KEY = 'sk_live_xxxxx'; // REJECTION
 
-// 🔴 External payment for digital goods
+// 🔴 External payment for digital goods where IAP is required
 Linking.openURL('https://stripe.com/checkout'); // Use react-native-iap
 
 // 🔴 Dynamic code execution
@@ -161,16 +163,17 @@ const text = "Also available on Android"; // REJECTION
 - [ ] User consent obtained before data collection
 
 ### Payments (Section 3.1)
-- [ ] StoreKit used for all digital purchases
+- [ ] Digital purchases use StoreKit unless an applicable storefront, entitlement, or 3.1.3 exception permits another method
 - [ ] Restore purchases implemented
 - [ ] Subscription terms clearly displayed
 - [ ] Loot box odds disclosed if applicable
-- [ ] No external payment for digital goods (unless entitled)
+- [ ] Purchase links use permitted destinations under the applicable regional terms (3.1.1(a)); US storefront links do not require an entitlement
 - [ ] Credits/currencies don't expire
 
 ### Safety (Section 1.x)
 - [ ] No objectionable content
-- [ ] UGC moderation implemented (filter, report, block, contact)
+- [ ] UGC and AI content creation apps implement moderation (filter, report, block, contact), including creation/generation flows (see [1.2](rules/1-safety.md#12-user-generated-content))
+- [ ] Safeguards proactively prevent and remove nonconsensual intimate imagery, including AI-generated imagery
 - [ ] UGC violations can be removed quickly and backed by a remediation plan
 - [ ] UGC: users agree to terms (EULA) stating zero tolerance for objectionable content and abusive users before sign-up/login, via an unchecked checkbox or explicit button, in the flow a new user sees on a fresh install (see [1.2](rules/1-safety.md#terms-agreement-and-moderation-commitments))
 - [ ] UGC: reports acted on within 24 hours by removing the content and ejecting the offending user
@@ -188,6 +191,9 @@ const text = "Also available on Android"; // REJECTION
 - [ ] Tested on both iPhone and iPad — App Review currently reviews on iPad Air 11-inch (M3) and iPhone 17 Pro Max (as of August 2026)
 - [ ] All features complete and functional
 - [ ] No placeholder content
+- [ ] New features, functionality, and product changes are specifically described in Notes for Review and accessible to reviewers (2.3.1)
+- [ ] No hidden, dormant, or undocumented features, including functionality concealed during review and enabled after approval (see [2.5.19](rules/2-performance.md#2519-hidden-dormant-or-undocumented-features))
+- [ ] Creative assets for product page headers and search results comply with [2.3.14](rules/2-performance.md#2314-creative-assets)
 - [ ] No pricing words such as "Free" in the app name, subtitle, keywords, screenshots, or previews, including text inside the captured app screens (see [2.3.7](rules/2-performance.md#237-app-name-keywords-and-metadata-integrity))
 - [ ] IPv6 tested and functional
 - [ ] Demo account provided if needed
@@ -206,6 +212,7 @@ const text = "Also available on Android"; // REJECTION
 - [ ] Not monetizing built-in capabilities
 
 ### Legal (Section 5.x)
+- [ ] No content or features facilitating human trafficking or child exploitation; Section 5 requires App Store removal and a block from alternative distribution
 - [ ] No unlicensed third-party content
 - [ ] Proper Apple trademark usage
 - [ ] Gambling license if applicable (with real location-based geo-restriction)
@@ -258,6 +265,8 @@ Softer signals count too: if the user repeatedly dismisses the same kind of find
 
 - [App Store Review Guidelines](https://developer.apple.com/app-store/review/guidelines/)
 - [Apple Developer Program License Agreement](https://developer.apple.com/support/terms/apple-developer-program-license-agreement/)
+- [October 16, 2026 App Review Guidelines update](https://developer.apple.com/news/?id=92th7e5i)
+- [Nonconsensual intimate imagery and bait-and-switch clarification (October 2026)](https://developer.apple.com/news/?id=vvzx6cul)
 - [June 8, 2026 App Review Guidelines update](https://developer.apple.com/news/?id=a233fmpw)
 - [Age rating questionnaire: social media questions (July 2026)](https://developer.apple.com/news/?id=tlur8uvi)
 - [Age rating updates for the Republic of Korea (August 2026)](https://developer.apple.com/news/?id=oj3r9pvw)
@@ -265,4 +274,6 @@ Softer signals count too: if the user repeatedly dismisses the same kind of find
 - [Changes to iOS in Brazil (June 2026)](https://developer.apple.com/news/?id=dhwadr2x)
 - [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/)
 - [App Store Connect Help](https://developer.apple.com/help/app-store-connect/)
+- [App Review Help (submission preparation, status, rejections, and appeals)](https://developer.apple.com/help/app-review/)
+- [App Store asset best practices](https://developer.apple.com/app-store/asset-best-practices/)
 - [Apple Developer Documentation](https://developer.apple.com/documentation/)

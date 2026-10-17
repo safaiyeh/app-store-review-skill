@@ -8,7 +8,7 @@ description: App Store Review Guidelines Section 5 - Legal (privacy, data collec
 **Section intro (enforcement-relevant):**
 - [ ] Apps must comply with ALL legal requirements in any location where they are made available — it's the developer's obligation to understand and conform to local laws
 - [ ] Apps that solicit, promote, or encourage criminal or clearly reckless behavior will be REJECTED
-- [ ] In extreme cases (e.g. apps facilitating human trafficking or exploitation of children), Apple will notify appropriate authorities
+- [ ] Apps facilitating human trafficking or exploitation of children, including child sexual abuse material, trigger notification of appropriate authorities, App Store removal, and a block from alternative distribution (see Apple's [October 16, 2026 clarification](https://developer.apple.com/news/?id=vvzx6cul))
 
 ## 5.1 Privacy
 

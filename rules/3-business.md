@@ -175,7 +175,7 @@ const handleLootBoxPurchase = () => {
 ### 3.1.1(a) Link to Other Purchase Methods
 
 **General:**
-- [ ] Entitlements allow a link to a website the developer owns or maintains responsibility for, to purchase digital content or services
+- [ ] Where approved, entitlements allow purchase links to a permitted destination; verify destination eligibility under the applicable agreement
 - [ ] US storefront: NO entitlement required — apps may include buttons, external links, or other calls to action freely
 
 **Regional notes (verify current terms before relying on these):**
@@ -183,16 +183,13 @@ const handleLootBoxPurchase = () => {
 - [ ] EU: under updated terms effective October 1, 2026, apps on the EU App Store may offer alternative payment options alongside Apple IAP (with added child safety protections); the Core Technology Fee is replaced by a 5% Core Technology Commission on digital transactions in alternatively distributed apps
 
 **StoreKit External Purchase Link Entitlements:**
-- [ ] Available in specific regions only (iOS/iPadOS App Store)
-- [ ] May include link to developer website informing users of other ways to purchase digital goods or services
+- [ ] Available only for the storefronts and platforms covered by the applicable entitlement agreement
+- [ ] In eligible regions, apps may offer IAP alongside a link using a StoreKit External Purchase Link Entitlement or, where permitted, a Music Streaming Services Entitlement
+- [ ] Links must use a permitted destination; approved destinations may differ by region
 - [ ] Link may state where and how to purchase, and that items may be available for a comparatively lower price
 - [ ] All other storefronts (except US, where the prohibition does not apply): apps AND their metadata may NOT include buttons, external links, or other calls to action that direct customers to purchasing mechanisms other than IAP
 
-**Music Streaming Services Entitlements:**
-- [ ] May include link (or buy button) to developer website informing users of other ways to purchase digital music content or services
-- [ ] May invite users to provide email for the express purpose of sending a purchase link
-- [ ] Link may inform users where and how to purchase, and the price of items
-- [ ] Limited to specific storefronts; in all other storefronts, streaming music apps AND their metadata may NOT include buttons, external links, or other calls to action to non-IAP purchasing
+Apple's [October 16, 2026 update](https://developer.apple.com/news/?id=92th7e5i) incorporates Music Streaming Services Entitlements into the StoreKit External Purchase Link guidance. Verify the current [external purchase documentation](https://developer.apple.com/documentation/storekit/external-purchase) and regional agreement before recommending a destination or purchase flow. Reader app account links remain governed separately by [3.1.3(a)](#313a-reader-apps).
 
 **Fraud and Misconduct:**
 Misleading marketing, scams, or fraud results in removal from App Store and potentially Developer Program.
