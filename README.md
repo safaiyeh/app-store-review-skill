@@ -4,7 +4,7 @@ An AI agent skill that exhaustively evaluates iOS, macOS, tvOS, watchOS, and vis
 
 **Supports:** Swift, Objective-C, **React Native**, and **Expo** apps
 
-**Current through:** Apple's official June 8, 2026 App Review Guidelines update
+**Current through:** Apple's official [October 16, 2026 App Review Guidelines update](https://developer.apple.com/news/?id=92th7e5i)
 
 ## Installation
 
@@ -105,7 +105,7 @@ This skill covers **ALL 5 major sections** with **EVERY guideline point**:
 
 ### [1. Safety](rules/1-safety.md)
 - 1.1 Objectionable Content (1.1.1-1.1.7)
-- 1.2 User-Generated Content & Creator Content
+- 1.2 User-Generated Content, AI Content Creation & Creator Content (including nonconsensual intimate imagery safeguards)
 - 1.3 Kids Category (parental gates, privacy, analytics)
 - 1.4 Physical Harm (medical apps, drug dosage, substances)
 - 1.5 Developer Information
@@ -115,12 +115,12 @@ This skill covers **ALL 5 major sections** with **EVERY guideline point**:
 ### [2. Performance](rules/2-performance.md)
 - 2.1 App Completeness (final versions, IAP)
 - 2.2 Beta Testing
-- 2.3 Accurate Metadata (2.3.1-2.3.13)
+- 2.3 Accurate Metadata (2.3.1-2.3.14, including creative assets)
 - 2.4 Hardware Compatibility (2.4.1-2.4.5)
-- 2.5 Software Requirements (2.5.1-2.5.18)
+- 2.5 Software Requirements (2.5.1-2.5.19, including hidden-feature enforcement)
 
 ### [3. Business](rules/3-business.md)
-- 3.1 Payments (IAP, subscriptions, external links, crypto)
+- 3.1 Payments (IAP, subscriptions, regional purchase-link entitlements and permitted destinations, crypto)
 - 3.1.1-3.1.5 In-App Purchase rules
 - 3.2 Other Business Models (acceptable/unacceptable)
 
@@ -136,6 +136,7 @@ This skill covers **ALL 5 major sections** with **EVERY guideline point**:
 - 4.10 Monetizing Built-In Capabilities
 
 ### [5. Legal](rules/5-legal.md)
+- Enforcement for human trafficking and child exploitation (App Store removal and alternative-distribution blocks)
 - 5.1 Privacy (data collection, use, sharing, health, kids, location)
 - 5.2 Intellectual Property
 - 5.3 Gaming, Gambling, Lotteries
@@ -173,15 +174,16 @@ Key packages covered:
 ### Critical Issues (Immediate Rejection)
 - Private API usage
 - Hardcoded secrets/credentials
-- External payment for digital goods
+- External payment for digital goods where IAP is required
 - On-device cryptocurrency mining
 - Dynamic code execution
+- Hidden, dormant, or undocumented features concealed from App Review (2.5.19)
 
 ### High-Risk Issues
 - Missing App Tracking Transparency
 - Account creation without deletion
 - IAP without restore purchases
-- UGC without moderation
+- UGC or AI content creation without moderation, including safeguards against nonconsensual intimate imagery
 - UGC without removal workflows or a compliance improvement plan
 - UGC without a terms (EULA) agreement before sign-up/login, 24-hour report handling, or blocking that hides content immediately
 - Kids apps without parental gates
@@ -194,6 +196,7 @@ Key packages covered:
 - References to other platforms
 - "Free" or other pricing words in screenshots, including in-app UI text
 - Custom review prompts instead of the system API
+- Creative assets with inappropriate content, misleading app references, unverifiable claims, or specific/discounted pricing (2.3.14)
 
 ## When It Triggers
 

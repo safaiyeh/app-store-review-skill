@@ -177,7 +177,9 @@ const sendPrankSMS = () => { }; // REJECTION
 
 ## 1.2 User-Generated Content
 
-Apps with user-generated content present particular challenges, ranging from intellectual property infringement to anonymous bullying. To prevent abuse, apps with UGC or social networking services MUST include:
+Guideline 1.2 covers apps where users create, generate, upload, share, or otherwise contribute content, including social media, UGC platforms, and AI content creation apps. A public feed is not a prerequisite for applying this guideline. Risks include intellectual property infringement, nonconsensual intimate imagery, and anonymous bullying.
+
+Under Apple's [October 16, 2026 clarification](https://developer.apple.com/news/?id=vvzx6cul), moderation must proactively prevent and remove nonconsensual intimate imagery, including AI-generated imagery. Review creation and generation flows as well as uploads and sharing; a report button alone does not establish adequate safeguards.
 
 ### Required UGC Features (ALL MANDATORY)
 
@@ -186,6 +188,11 @@ Apps with user-generated content present particular challenges, ranging from int
 - [ ] **User Blocking:** The ability to block abusive users from the service
 - [ ] **Terms Agreement (EULA):** Users must agree to terms that state zero tolerance for objectionable content and abusive users before they can sign up or log in (see [Terms Agreement and Moderation Commitments](#terms-agreement-and-moderation-commitments))
 - [ ] **Contact Information:** Published contact information so users can easily reach you
+
+**AI-generated and nonconsensual intimate imagery:**
+- [ ] Safeguards prevent and remove nonconsensual intimate imagery, including AI-generated sexual images of real people
+- [ ] Review prompts, reference-image inputs, generated outputs, and publication flows for abuse paths; verify the safeguards actually cover the app's creation tools
+- [ ] Apps that generate nudity or sexually explicit imagery, including "nudification" apps, also violate [1.1.4](#114-overtly-sexual-or-pornographic-material)
 
 **Swift implementation:**
 ```swift
@@ -344,6 +351,7 @@ Apple's current 1.2 language makes the developer responsible for removing conten
 
 - [ ] Violating content must be removable quickly when detected or reported (within 24 hours of a report), and the user who posted it ejected
 - [ ] App Review may require a concrete compliance improvement plan before the app can stay on the App Store
+- [ ] Missing appropriate safeguards or failure to remediate violations after notice may violate the Developer Code of Conduct (5.6); Apple may remove the app until compliance improvements are demonstrated
 - [ ] Egregious or repeated UGC failures can trigger immediate app removal and Developer Program removal
 
 **Review for:**
